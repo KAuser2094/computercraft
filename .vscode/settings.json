@@ -1,51 +1,11 @@
 {
-    "Lua.diagnostics.disable": [
-        "unused-local",
-        "lowercase-global",
-        "unused-function",
-        "undefined-field",
-        "redefined-local"
+    "Lua.workspace.library": [
+        "${addons}/cc-tweaked/module/library"
     ],
-    "Lua.diagnostics.severity": {
-        "redefined-local": "Warning"
+    "Lua.runtime.version": "Lua 5.3",
+    "Lua.runtime.builtin": {
+        "io": "disable",
+        "os": "disable"
     },
-    "Lua.diagnostics.globals": [
-        "printError",
-        "sleep",
-        "read",
-        "write",
-        "print",
-        "colours",
-        "colors",
-        "commands",
-        "disk",
-        "fs",
-        "gps",
-        "help",
-        "http",
-        "paintutils",
-        "parallel",
-        "peripheral",
-        "rednet",
-        "redstone",
-        "keys",
-        "settings",
-        "shell",
-        "multishell",
-        "term",
-        "textutils",
-        "turtle",
-        "pocket",
-        "vector",
-        "bit32",
-        "window",
-        "_CC_DEFAULT_SETTINGS",
-        "_HOST",
-        "_VERSION",
-        "_",
-        "rs",
-        "bit"
-    ],
-    "Lua.runtime.version": "Lua 5.2",
-    "Lua.completion.autoRequire": false,
+    "Lua.workspace.checkThirdParty": false
 }
