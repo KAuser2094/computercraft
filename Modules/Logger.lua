@@ -3,7 +3,9 @@
 
 local LogFile = "/logs.txt"
 
----@class LoggerLevel
+-- EDIT: Changed to enum from class
+
+---@enum LoggerLevel
 local DebugLevel = {
     -- EDIT (Added): Make "NoTag" and another Tag option that is clearly temporary (should always print, and shows that they should be removed later)
     Temporary = {prefix = "T", color = colors.purple, severity = 0},
@@ -15,7 +17,11 @@ local DebugLevel = {
     Debug = {prefix = "D", color = colors.blue, severity = 4},
     Verbose = {prefix = "V", color = colors.cyan, severity = 5},
 }
-Logger = {
+
+-- EDIT: Made this a class, feel like it really should have already been one...Also made it local because why would you have it global?
+
+---@class Logger
+local Logger = {
     Levels = DebugLevel,
     Logs = {},
     _p =
@@ -44,12 +50,16 @@ if _G.overrides.oldError == nil then
             file = fs.open(LogFile, "a")
         end
         local trace = debug.traceback()
-        file.write(trace .. "\r\n")
-        if message then
-            file.write(message)
-            file.write("\r\n")
+
+        -- EDIT: Add check for nil (I feel it would error before this... but whatever)
+        if file then
+            file.write(trace .. "\r\n")
+            if message then
+                file.write(message)
+                file.write("\r\n")
+            end
+            file.close()
         end
-        file.close()
         _G.overrides.oldError(message, level)
     end
 end
@@ -73,7 +83,8 @@ function Logger.setLogSize(size)
         error(("bad argument #%d (expected %s, got %s)"):format(1, "number", type(size)), 2)
     end
     Logger._p.LogsToKeep = size
-    while #Logger.Logs > Logger.LogsToKeep do
+    -- EDIT: Pretty sure "Logger.LogsToKeep" is an error. So fixed
+    while #Logger.Logs > Logger._p.LogsToKeep do
         table.remove(Logger.Logs,1)
     end
 end
@@ -112,8 +123,10 @@ function Logger.setOutputTerminal(outputTerminal)
     Logger._p.outputTerminal = outputTerminal
 end
 
+-- EDIT: Changed from "vararg" to "param ..."
+
 ---log without setting a tag, useful for quick debugging.
----@vararg any any thing you wish to log
+---@param ... any any thing you wish to log
 function Logger.logNoTag(...)
     local tag = ""
     Logger.log(tag, DebugLevel.Temporary, ...)
@@ -121,7 +134,7 @@ end
 
 ---Log a error
 ---@param tag string tag to log for
----@vararg any any thing you wish to log
+---@param ... any any thing you wish to log
 function Logger.logE(tag, ...)
     if type(tag) ~= "string" then
         error(("bad argument #%d (expected %s, got %s)"):format(1, "string", type(tag)), 2)
@@ -131,7 +144,7 @@ end
 
 ---Log a warning
 ---@param tag string tag to log for
----@vararg any any thing you wish to log
+---@param ... any any thing you wish to log
 function Logger.logW(tag, ...)
     if type(tag) ~= "string" then
         error(("bad argument #%d (expected %s, got %s)"):format(1, "string", type(tag)), 2)
@@ -141,7 +154,7 @@ end
 
 ---Log a info message
 ---@param tag string tag to log for
----@vararg any any thing you wish to log
+---@param ... any any thing you wish to log
 function Logger.logI(tag, ...)
     if type(tag) ~= "string" then
         error(("bad argument #%d (expected %s, got %s)"):format(1, "string", type(tag)), 2)
@@ -151,7 +164,7 @@ end
 
 ---Log a debug message
 ---@param tag string tag to log for
----@vararg any any thing you wish to log
+---@param ... any any thing you wish to log
 function Logger.logD(tag, ...)
     if type(tag) ~= "string" then
         error(("bad argument #%d (expected %s, got %s)"):format(1, "string", type(tag)), 2)
@@ -161,7 +174,7 @@ end
 
 ---Log a verbose message
 ---@param tag string tag to log for
----@vararg any any thing you wish to log
+---@param ... any any thing you wish to log
 function Logger.logV(tag, ...)
     if type(tag) ~= "string" then
         error(("bad argument #%d (expected %s, got %s)"):format(1, "string", type(tag)), 2)
@@ -174,7 +187,7 @@ end
 
 --- Log a temporary message
 ---@param tag string
----@vararg any any thing to log
+---@param ... any any thing to log
 function Logger.logT(tag, ...)
     if type(tag) ~= "string" then
         error(("bad argument #%d (expected %s, got %s)"):format(1, "string", type(tag)), 2)
@@ -193,9 +206,11 @@ local function handleCurDepthTabs(curDepth)
 	return retString
 end
 
+-- EDIT: You can use ? to denote optionaly instead of | nil
+
 ---print tables recursively (will print tables in tables in tables ...)
 ---@param tableToPrint table
----@param curDepth number | nil optional parameter used by recursive calls that gets current array Depth used for fancy printing
+---@param curDepth? number optional parameter used by recursive calls that gets current array Depth used for fancy printing
 ---@return string table table in string form to feed to your printer of choice
 local function printTableRecursive(tableToPrint, curDepth)
 	if curDepth == nil then
@@ -219,8 +234,10 @@ local function printTableRecursive(tableToPrint, curDepth)
 	return retString
 end
 
+-- EDIT: vararg change again
+
 ---convert table of input arguments into printable string for logging
----@vararg any stuff to log
+---@param ... any stuff to log
 ---@return string loggableString loggable string
 local function buildLogString(...)
     local toLog = {...}
@@ -255,10 +272,12 @@ local function buildLogString(...)
     return retString .. "\r\n"
 end
 
+-- EDIT: Yup, vararg
+
 ---log a message with level
 ---@param tag string tag to log as
 ---@param level table logging level
----@vararg any any thing you wish to log
+---@param ... any any thing you wish to log
 function Logger.log(tag, level, ...)
     if Logger._p.Tags[tag] == nil then
         Logger._p.Tags[tag] = Logger._p.LogLevel
