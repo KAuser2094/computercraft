@@ -2,6 +2,7 @@
     "Lua.workspace.library": [
         "${addons}/cc-tweaked/module/library"
     ],
+    "Lua.hover.expandAlias": false,
     "Lua.runtime.version": "Lua 5.3",
     "Lua.runtime.builtin": {
         "io": "disable",
