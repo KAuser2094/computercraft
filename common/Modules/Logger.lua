@@ -1,5 +1,9 @@
 --- Based off: https://gitlab.com/ralphgod3/cctutorials/-/blob/master/Modules/Logger.lua?ref_type=heads
 
+--- TODO:
+--- Make a "global" in the returned table that is a class that changes global default values which are used when Logger.new() is ran with no params
+--- Make a "singleton" that will cache its instance that modules may use.
+
 local p = require "cc.pretty"
 
 local TIME_FMT = "%F %T "
@@ -64,7 +68,7 @@ local function new(kwargs)
 
     --- @type Logger.Log[]
     Logs = {}
-    
+
     --- @type table<string, Logger.LoggerLevel>
     Tags = {}
 
@@ -105,7 +109,7 @@ local function new(kwargs)
         outputTerminal = terminal
         return this
     end
-    
+
     --- Sets the tag to the passed in leve
     --- @param tag string to change level
     --- @param level Logger.LoggerLevel Level to change to
@@ -243,7 +247,7 @@ local function new(kwargs)
     function this.logD(tag, ...)
         log(tag, DebugLevel.Debug, ...)
     end
-    
+
     --- Attempts to Log Verbose
     --- @param tag string The tag we are debugging to
     --- @param ... any Anything to log
@@ -257,7 +261,7 @@ end
 return setmetatable(
 {
     new = new
-}, 
+},
 {__call = function (_,...)
         new(...)
     end
