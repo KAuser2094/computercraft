@@ -23,6 +23,7 @@
 --- @field inheritsClass fun(self: IClass, klass: IClass | IClassDefinition | string): boolean -- Checks if the passed in class is one it inherits
 --- @field isExactClass fun(self: IClass, klass: IClass | IClassDefinition | string): boolean -- Checks if top level class is the passed in class
 --- @field isClass fun(self: IClass, klass: IClass | IClassDefinition | string): boolean -- Checks if the passed in class matches the current of inherited
+local IClass__public = {}
 
 --[[
     The fields and methods that (could) be used by the class and we don't want visible in the instance table
@@ -34,6 +35,7 @@
 --- @field getPrivate fun(self: IClass, key: any): any -- Gets the value at the instances private table using the key
 --- @field setPrivateTable fun(self: IClass, tbl: table) -- Replaces the instance's private table with the given
 --- @field setPrivate fun(self: IClass, key: any, value: any) -- Sets the key-value to the instnace's private table
+local IClass__private = {}
 
 --[[
     Fields and methods that STRICTLY only apply/are run on ClassDefinitions
@@ -55,9 +57,14 @@
 --- @field markPublic fun(self: IClassDefinition, key: any) -- Sets the key to be public (included in the instance table)
 --- @field markDefinitionOnly fun(self: IClassDefinition, key: any) -- Sets the key to only exist in the defintion (it is discarded during __index)
 --- @field isAClassDefinition true -- For checks
+local IClassDefinition__private = {}
 
-
+--[[
+    Actual Classes
+]]
 --- @class IClassDefinition : IClassDefinition._private, IClass._public, IClass._private
+local IClassDefinition = {}
 
 --- @class IClass : IClass._public, IClass._private
 --- @field isAClass true -- For checks
+local IClass = {}
