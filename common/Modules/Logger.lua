@@ -20,10 +20,8 @@ local DebugLevel = {
     Verbose = {prefix = "[VRB]", colour = colours.cyan, severity = 6}, --- @type Logger.LoggerLevel
 }
 
--- TODO: Below should probably be a weak table (If it is the only reference to the instance, then it should drop it, this will make the array sparse however)
-
 --- @type Logger[]
-local LoggerInstances = setmetatable({}, { __mode = "v" }) -- If this is the only reference to the instance, we drop (nil) that instnace
+local LoggerInstances = setmetatable({}, { __mode = "v" }) -- If this is the only reference to the instance, we drop (nil) that instance
 
 -- override error function to print stack traceback into logs
 if _G.overrides == nil then
