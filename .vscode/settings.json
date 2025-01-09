@@ -13,7 +13,7 @@
     },
     "Lua.workspace.checkThirdParty": false,
     "Lua.workspace.ignoreDir": [
-        "rom/modules/main/cc"
+        "cc_tweaked_rom_stub/modules/main/cc"
     ],
     "Lua.workspace.useGitIgnore": true,
 }
