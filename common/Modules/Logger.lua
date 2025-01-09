@@ -5,6 +5,8 @@
 --- Make a "singleton" that will cache its instance that modules may use.
 
 local p = require "cc.pretty"
+local colours = _G.colours
+local fs = _G.fs
 
 local TIME_FMT = "%F %T "
 
@@ -37,7 +39,7 @@ if _G.overrides.nativeError == nil then
         level = level and level + 1 or nil
 
         local trace = debug.traceback()
-        local logMsg = trace .. "\r\n" .. message .. "\r\n"
+        local logMsg = p.render(p.concat(p.pretty(trace), p.space_line, p.pretty(message), p.line))
         for _, instance in pairs(LoggerInstances) do -- We cannot guarentee an array as the weak table may drop an instance from anywhere.
             instance.logF("", logMsg)
         end

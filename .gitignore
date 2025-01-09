@@ -43,3 +43,6 @@ luac.out
 
 .temporary*
 *.temporary/
+
+temporary*
+*temporary/

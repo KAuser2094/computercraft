@@ -1,0 +1,11 @@
+By default the rom modules we include are from the "mc-1.20.x". (This will work in any version, just will use the 1.20.x code instead of that versions' code)
+
+To change copy the link https://github.com/cc-tweaked/CC-Tweaked/tree/<CHANGE_BRANCH_NAME_HERE>/projects/core/src/main/resources/data/computercraft/lua/rom/modules/main/cc
+
+Then go to "https://gitdirectory.download/" or similar, paste in the link, download and extract.
+
+You then want to keep going into the folders (there should only be as single folder in each folder) until you reach "rom". Copy the rom folder into the root directory
+
+If you are using "bundle_minify.py" in "scripts/" then it already adds the path "rom/modules/main/" to what it should look at when require-ing.
+
+If you are not, then make sure you add that to your paths so the bundler can see the "cc" folder to require from.

@@ -15,21 +15,34 @@ def main():
     output_file = f"{os.path.splitext(input_file)[0]}_min.lua"
 
     try:
-        # Run luabundler and luamin using subprocess
+        # Run luabundler and check for errors
         bundler_process = subprocess.Popen(
-            ["luabundler", "bundle", input_file, "-p", "./?.lua"],
+            ["luabundler", 
+             "bundle", 
+             input_file, 
+             "-p", 
+             "./?.lua", # Root directory 
+             "-p",
+             "rom/modules/main/?.lua", # + the modules from rom
+             ],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
+        bundler_output, bundler_error = bundler_process.communicate()
+
+        if bundler_process.returncode != 0:
+            print(f"Bundling failed: {bundler_error.decode()}")
+            sys.exit(1)
+
+        # Run luamin and check for errors
         minify_process = subprocess.Popen(
             ["luamin", "-c"],
-            stdin=bundler_process.stdout,
+            stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
-        bundler_process.stdout.close()  # Allow bundler_process to receive a SIGPIPE if minify_process exits
-        minify_output, minify_error = minify_process.communicate()
-        
+        minify_output, minify_error = minify_process.communicate(input=bundler_output)
+
         if minify_process.returncode != 0:
             print(f"Minification failed: {minify_error.decode()}")
             sys.exit(1)

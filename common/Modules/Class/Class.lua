@@ -1,6 +1,7 @@
-local Dbg = require "Modules.Logger"
-Dbg = Dbg.new():setOutputTerminal(term.current()):setPath("/log/Class.txt")
+local Dbg = require "common.Modules.Logger"
 local TAG = "CLASS_DEF"
+Dbg = Dbg.new()
+Dbg = Dbg:setOutputTerminal(term.current()):setTagLevel(TAG, Dbg.Levels.Warning)
 
 --- Is used to define a class
 
@@ -8,9 +9,11 @@ local TAG = "CLASS_DEF"
 --- @param klass string | IClassDefinition | IClass
 --- @return string | nil  klassName Returns nil if not a valid type
 local function getClassNameFromTypesWithIt(klass)
+    Dbg.logV(TAG, "Getting ClassName from:",klass)
     if type(klass) == "string" then return klass end
+    if klass.isAClassDefinition or klass.isAClass then return klass.getClassName() end
 
-    if klass.isAClassDefinition or klass.isAClass then klass.getClassName() end
+    Dbg.logE(TAG, "SOMEHOW GOT NIL GIVE KLASS, klass, type, isAClass/Definition", klass, type(klass), klass.isAClassDefinition or klass.isAClass)
 end
 
 --- Shallow merges
@@ -62,6 +65,7 @@ local private = setmetatable({}, {__mode = 'k'}) -- Holds the private fields of 
 local function _basicInheritInto(self, klass)
     deepMerge(klass.__inheritanceSettings, self.__inheritanceSettings)
     deepMerge(klass.__instanceSettings, self.__instanceSettings)
+    deepMerge(klass.__otherSettings, self.__otherSettings) -- This COULD mess up some settings
 
     shallowMergeWithPreserve(klass, self, klass.__inheritanceSettings.doNotCopy)
 
@@ -72,7 +76,7 @@ local function _basicInheritInto(self, klass)
             shallowMerge(klass[k],self[k])
         end
     end
-    klass.inherits[self:getClassName()] = self
+    -- klass.inherits[self:getClassName()] = self -- When you create a new ClassDefinition you are inheriting yourself already
 
     for k, v in pairs(klass.__inheritanceSettings.deepMerge) do
         if v then -- Just in case someone set to false
@@ -83,15 +87,13 @@ local function _basicInheritInto(self, klass)
     end
 
     -- TODO: Execute hook
-    -- self:postInherited(klass)
+    self:postInherited(klass)
 end
 
 --- Runs after self inherits INTO (is inherited by) a klass
 --- @param self IClassDefinition
 --- @param klass IClassDefinition
-local function postInherited(self, klass)
-
-end
+local function postInherited(self, klass) end
 
  --- inherits this into the given class definition as a base class
 --- @param self IClassDefinition
@@ -163,6 +165,8 @@ local function new(definition, ...)
 
     private[this] = {} -- Add a private instance variable table (Let's you hide instance fields, call getPrivateTable() to get the table back)
 
+    this.isAClass = true
+
     -- Makes certain functions and values public
     for key, v in pairs(definition.__instanceSettings.public) do
         if v then -- Check in case v got set to false
@@ -176,9 +180,8 @@ local function new(definition, ...)
         definition.init(this, ...)
     end
 
-    -- TODO: PostInit Hooks
-    -- definition:postInit(this)
-    -- definition:_checkWellFormed(this)
+    definition:postInit(this)
+    definition:_checkWellFormed(this)
 
     return this
 end
@@ -186,23 +189,17 @@ end
 --- Is ran after the initialisation of a class for the given definition
 --- @param self IClassDefinition
 --- @param instance IClass
-local function postInit(self, instance)
-
-end
+local function postInit(self, instance) end
 
 --- Is ran after ALL initialisation, extra checks on wellformedness
 --- @param self IClassDefinition
 --- @param instance IClass
-local function _checkWellFormed(self, instance)
-    -- Implemented in Interface class.
-end
+local function _checkWellFormed(self, instance) --[[Implemented in Interface class.]] end
 
 --- Is ran after ALL initialisation, extra checks on wellformedness, extra wellformedness checks that can be defined
 --- @param self IClassDefinition
 --- @param instance IClass
-local function checkWellFormed(self, instance)
-    -- Implemented in Interface class.
-end
+local function checkWellFormed(self, instance) --[[Implemented in Interface class.]] end
 
 --- Makes a the key-value at key public so the user can see the fields in the class
 --- @param self IClassDefinition
@@ -225,6 +222,63 @@ local function markDefinitionOnly(self, key)
 end
 
 --[[
+    METAMETHOD HOOKS AND OTHER STUFF
+]]
+
+-- INDEX
+
+--- @param cls IClassDefinition
+--- @param this IClass
+--- @param key any
+--- @return any value
+local function _preIndex(cls, this, key)
+    local ret
+    for _, base in pairs(cls.inherits) do
+        ret = base:preIndex(this, key)
+        if ret ~= nil then return ret end
+    end
+end
+
+--- @param cls IClassDefinition
+--- @param this IClass
+--- @param key any
+--- @return any value
+local function preIndex(cls, this, key) end
+
+--- @param cls IClassDefinition
+--- @param this IClass
+--- @param key any
+--- @param retValue any
+local function _postIndex(cls, this, key, retValue)
+    for _, base in pairs(cls.inherits) do
+        retValue = cls:postIndex(this, key, retValue)
+    end
+    return retValue
+end
+
+--- @param cls IClassDefinition
+--- @param this IClass
+--- @param key any
+--- @param retValue any
+local function postIndex(cls, this, key, retValue) end
+
+-- NEW INDEX
+
+--- @param cls IClassDefinition
+--- @param this IClass
+--- @param key any
+--- @param value any
+local function _preNewIndex(cls, this, key, value) end
+
+--- @param cls IClassDefinition
+--- @param this IClass
+--- @param key any
+--- @param value any
+local function preNewIndex(cls, this, key, value) end
+
+
+
+--[[
     CLASS DEFINITION PROPER
 ]]
 
@@ -244,6 +298,7 @@ local function MakeClassDefinition(className)
             className = true,
             __inheritanceSettings = true, -- This is ALWAYS deep merged on inherit
             __instanceSettings = true, -- This is ALWAYS deep merged on inherit
+            __otherSettings = true, -- This is ALWAYS deep merged on inherit, also deep merged with "default.__otherSettings"
             inherits = true,
             hooks = true,
         },
@@ -277,7 +332,15 @@ local function MakeClassDefinition(className)
         },
         public = {
             -- to be done with the markPublic function
+        },
+        effectiveKeys = {
+
         }
+    }
+
+    --- @class IClassDefinition._private.__otherSettings
+    cls.__otherSettings = {
+        protectEffectiveKeys = true,
     }
 
     cls.inheritsInto = inheritsInto
@@ -304,11 +367,9 @@ local function MakeClassDefinition(className)
     cls.postInit = postInit
 
     cls._checkWellFormed = _checkWellFormed
-
     cls.checkWellFormed = checkWellFormed
 
     cls.markPublic = markPublic
-
     cls.markDefinitionOnly = markDefinitionOnly
 
     --[[
@@ -323,7 +384,9 @@ local function MakeClassDefinition(className)
     cls.className = className
 
     --- @type IClass._private.inherits
-    cls.inherits = {}
+    cls.inherits = { [cls.className] = cls } -- You technically inherit yourself
+
+    --- PRIVATE
 
     --- Gets the private table for the instance
     --- @param self IClass
@@ -336,6 +399,7 @@ local function MakeClassDefinition(className)
     --- @param self IClass
     --- @param key any Gets the private instance value at the key (This is already added to __index so you likely do not need to use this)
     function cls:getPrivate(key)
+        if not self.isAClass then return end
         return private[self][key]
     end
 
@@ -343,6 +407,7 @@ local function MakeClassDefinition(className)
     --- @param self IClass
     --- @param tbl table
     function cls:setPrivateTable(tbl)
+        if not self.isAClass then return end
         private[self] = tbl
     end
 
@@ -351,8 +416,49 @@ local function MakeClassDefinition(className)
     --- @param key any
     --- @param value any
     function cls:setPrivate(key, value)
+        if not self.isAClass then return end
         private[self][key] = value
     end
+
+    --- KEY CONFLICTS
+
+    --- Adds the key to effective keys
+    --- @param key any
+    function cls:setEffectiveKey(key)
+        if self.isAClassDefinition then
+            self.__instanceSettings.effectiveKeys[key] = true
+        elseif self.isAClass then
+            local p = self:getPrivateTable()
+            p.__effectiveKeys = p.__effectiveKeys or {} -- Make the table just in case
+            p.__effectiveKeys[key] = true
+        end
+    end
+
+    --- Checks if the key is an effective key
+    --- @param key any
+    --- @return boolean
+    function cls:isEffectiveKey(key)
+        if self.__instanceSettings.effectiveKeys[key] then return true end
+        if self.isAClass then
+            local p = self:getPrivateTable()
+            p.__effectiveKeys = p.__effectiveKeys or {} -- Make the table just in case
+            if p.__effectiveKeys[key] then return true end
+        end
+        return false
+    end
+
+    --- PROTECTED KEYS
+
+
+    function cls:addProtectionToKey(key)
+
+    end
+
+    --- METATABLE HOOKS AND OTHER
+
+    cls.preIndex = preIndex
+    cls.postIndex = postIndex
+    cls.preNewIndex = preNewIndex
 
     --[[
         PUBLIC FIELDS AND METHODS
@@ -365,7 +471,6 @@ local function MakeClassDefinition(className)
 
     function cls.getAllClassNames()
         local names = {}
-        table.insert(names, cls.className)
         for klassName, _ in pairs(cls.inherits) do
             table.insert(names, klassName)
         end
@@ -380,6 +485,7 @@ local function MakeClassDefinition(className)
     function cls:inheritsClass(klass)
         local klassName = getClassNameFromTypesWithIt(klass)
         if not klassName then return false end
+        if klassName == className then return false end -- Is Exact Class
         for baseName, _ in pairs(cls.inherits) do
             if baseName == klassName then return true end
         end
@@ -404,14 +510,69 @@ local function MakeClassDefinition(className)
     --- @param klass string | IClassDefinition | IClass
     --- @return boolean
     function cls:isClass(klass)
-        if cls:isExactClass(klass) then return true end
-        if cls:inheritsClass(klass) then return true end
+        local klassName = getClassNameFromTypesWithIt(klass)
+        if not klassName then return false end
+        Dbg.logI(TAG, "inherits = ",cls.inherits)
+        for baseName, _ in pairs(cls.inherits) do
+            Dbg.logV("Checking", baseName, "against:", klassName, ". Result:", baseName == klassName)
+            if baseName == klassName then return true end
+        end
         return false
     end
 
     cls:markPublic("isClass")
 
+    --[[
+        META METHODS
+    ]]
+
+    -- Own metamethod(s)
+    setmetatable(cls, {
+        __call = function(_, ...)
+            return cls.new(...)
+        end,
+    })
+
+    cls.__index = function (self, key)
+        -- Check instances private
+        local try =  cls.getPrivate(self, key)
+        if try ~= nil then return try end
+
+        local rawDefinition = rawget(cls, key)
+        local rawInstance = rawget(self, key)
+        try = _preIndex(cls, self, key)
+        -- Do not return a definition only value
+        -- (These checks check if the value was taken from the ClassDefinition, and if they did, to nil it if is is a definition only value)
+        try = (type(try) ~= type(rawDefinition) or try ~= rawDefinition) and try or nil
+        rawDefinition = not cls.__instanceSettings.definitionOnly[key] and rawDefinition or nil
+
+        local ret = try or rawDefinition or rawInstance or nil
+
+        ret = _postIndex(cls, self, key, ret)
+        return ret
+    end
+
+    cls.__newindex = function (self, key, value)
+        -- Protection against key conflics
+        if cls.__otherSettings.protectEffectiveKeys and cls.isEffectiveKey(self, key) then
+            -- Key conflict
+            local pretty = require "cc.pretty"
+            local err = "KEY CONFLICT, the key: " ..  pretty.render(pretty.pretty(key)) .. " was already an effective key"
+            Dbg.logE(TAG, err)
+            error(err, 2) -- Level 2 is whatever caused __newindex to be called
+        end
+
+        -- Try and set with the hooks
+        local set = _preNewIndex(cls, self, key, value)
+        -- Otherwise use default
+        if not set then
+            rawset(self, key, value)
+        end
+    end
+
     return cls
 end
 
 return MakeClassDefinition
+--- TODO:
+--- Default for settings (make a default table in the correct shape and deep merge it in), also let other classes add to their own default
