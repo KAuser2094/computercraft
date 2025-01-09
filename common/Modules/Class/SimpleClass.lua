@@ -1,4 +1,6 @@
 -- A HEAVILY stripped down ClassDefinition that provides enough that it can still provide a @type IClass
+-- "Simple" compared to normal Class, obviously this is still quite complicated compared to other class implementations
+
 local Dbg = require "common.Modules.Logger"
 local TAG = "SIMPLE_CLASS_DEF"
 Dbg = Dbg.new()
