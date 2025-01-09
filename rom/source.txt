@@ -1,9 +1,0 @@
-As according to the CCPL License access to the source code is given.
-
-Source code for CC Tweaked can be found at:
-
-https://github.com/cc-tweaked/CC-Tweaked/
-
-The code used in the stub can be found at:
-
-https://github.com/cc-tweaked/CC-Tweaked/tree/mc-1.20.x/projects/core/src/main/resources/data/computercraft/lua/rom
