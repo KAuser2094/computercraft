@@ -49,14 +49,15 @@ local function new(definition, ...)
 end
 
 --- Returns a simplified class definition
---- @param classNmae string
+--- @param className string
 --- @return ISimpleClassDefinition
-local function MakeSimpleClassDefinition(classNmae)
+local function MakeSimpleClassDefinition(className)
+    Dbg.logI(TAG, "Creating ClassDef with name: " .. className)
     local cls = {}
 
-    cls.classNmae = classNmae
+    cls.className = className
 
-    cls.inherits = { [cls.classNmae] = cls }
+    cls.inherits = { [cls.className] = cls }
 
     cls.isAClassDefinition = true
 
