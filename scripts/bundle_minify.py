@@ -23,7 +23,7 @@ def main():
              "-p", 
              "./?.lua", # Root directory 
              "-p",
-             "rom/modules/main/?.lua", # + the modules from rom
+             "cc_tweaked_rom_stub/modules/main/?.lua", # + the modules from rom
              ],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
