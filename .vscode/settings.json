@@ -1,12 +1,21 @@
 {
     "Lua.workspace.library": [
-        "${addons}/cc-tweaked/module/library"
+        "${addons}/cc-tweaked/module/library",
     ],
+    "files.exclude": {
+        "rom/modules/main/cc/**/*.lua": true // We hide the files so the Lua Language server shuts up
+    },
     "Lua.hover.expandAlias": false,
     "Lua.runtime.version": "Lua 5.3",
     "Lua.runtime.builtin": {
         "io": "disable",
         "os": "disable"
     },
-    "Lua.workspace.checkThirdParty": false
+    "Lua.workspace.checkThirdParty": false,
+    "Lua.workspace.ignoreDir": [
+        "rom/modules/main/cc"
+    ],
+    "Lua.diagnostics.disable": [
+        "param-type-mismatch"
+    ],
 }

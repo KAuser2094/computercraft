@@ -1,6 +1,12 @@
 --- Based off: https://gitlab.com/ralphgod3/cctutorials/-/blob/master/Modules/Logger.lua?ref_type=heads
 
+--- TODO:
+--- Make a "global" in the returned table that is a class that changes global default values which are used when Logger.new() is ran with no params
+--- Make a "singleton" that will cache its instance that modules may use.
+
 local p = require "cc.pretty"
+local colours = _G.colours
+local fs = _G.fs
 
 local TIME_FMT = "%F %T "
 
@@ -20,10 +26,8 @@ local DebugLevel = {
     Verbose = {prefix = "[VRB]", colour = colours.cyan, severity = 6}, --- @type Logger.LoggerLevel
 }
 
--- TODO: Below should probably be a weak table (If it is the only reference to the instance, then it should drop it, this will make the array sparse however)
-
 --- @type Logger[]
-local LoggerInstances = setmetatable({}, { __mode = "v" }) -- If this is the only reference to the instance, we drop (nil) that instnace
+local LoggerInstances = setmetatable({}, { __mode = "v" }) -- If this is the only reference to the instance, we drop (nil) that instance
 
 -- override error function to print stack traceback into logs
 if _G.overrides == nil then
@@ -35,7 +39,7 @@ if _G.overrides.nativeError == nil then
         level = level and level + 1 or nil
 
         local trace = debug.traceback()
-        local logMsg = trace .. "\r\n" .. message .. "\r\n"
+        local logMsg = p.render(p.concat(p.pretty(trace), p.space_line, p.pretty(message), p.line))
         for _, instance in pairs(LoggerInstances) do -- We cannot guarentee an array as the weak table may drop an instance from anywhere.
             instance.logF("", logMsg)
         end
@@ -66,7 +70,7 @@ local function new(kwargs)
 
     --- @type Logger.Log[]
     Logs = {}
-    
+
     --- @type table<string, Logger.LoggerLevel>
     Tags = {}
 
@@ -107,7 +111,7 @@ local function new(kwargs)
         outputTerminal = terminal
         return this
     end
-    
+
     --- Sets the tag to the passed in leve
     --- @param tag string to change level
     --- @param level Logger.LoggerLevel Level to change to
@@ -245,7 +249,7 @@ local function new(kwargs)
     function this.logD(tag, ...)
         log(tag, DebugLevel.Debug, ...)
     end
-    
+
     --- Attempts to Log Verbose
     --- @param tag string The tag we are debugging to
     --- @param ... any Anything to log
@@ -259,7 +263,7 @@ end
 return setmetatable(
 {
     new = new
-}, 
+},
 {__call = function (_,...)
         new(...)
     end

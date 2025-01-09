@@ -52,7 +52,7 @@
 --- @alias ccTweaked.colours.colourSet ccTweaked.colors.colorSet
 
 
---- BELOW TAKEN FROM THE CC TWEAKED LUA LANGUAGE SERVER ADD ON (Editing to use British English spelling instead)
+--- BELOW TAKEN FROM THE CC TWEAKED LUA LANGUAGE SERVER ADDON (Editing to use British English spelling instead)
 
 --- Contains constants and functions for colour values. Useful in conjunction
 --- with Bundled Cables from mods like [Project
@@ -261,4 +261,4 @@ function colours.rgb8(hex) end
 --- [Official Documentation](https://tweaked.cc/module/colors.html#v:toBlit)
 function colours.toBlit(colour) end
 
---- END OF TAKEN FROM ADD ON
+--- END OF TAKEN FROM ADDON
