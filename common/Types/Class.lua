@@ -43,9 +43,19 @@ local IClass__public = {}
 local IClass__private = {}
 
 --[[
+    Fields and mehods that STRICTLY only apply/are run on ISimpleClassDefinition
+]]
+
+--- @class ISimpleClassDefinition._private
+--- @field init fun(self: IClass, args...?: any) -- Specific initialisation steps for the ClassDefinition
+--- @field new fun(args...?: any): IClass -- Creates an instance of the class according to own definition
+--- @field isAClassDefinition true -- For checks
+local ISimpleClassDefinition__private = {}
+
+--[[
     Fields and methods that STRICTLY only apply/are run on ClassDefinitions
 ]]
---- @class IClassDefinition._private -- The fields and methods exculsive to the ClassDefinition (They are thrown away by Class when called __ndex)
+--- @class IClassDefinition._private : ISimpleClassDefinition._private -- The fields and methods exculsive to the ClassDefinition (They are thrown away by Class when called __ndex)
 --- @field __inheritanceSettings IClassDefinition._private.__inheritanceSettings -- Holds settings for inheritance
 --- @field __instanceSettings IClassDefinition._private.__instanceSettings -- Holds settings for creating instances
 --- @field __otherSettings IClassDefinition._private.__otherSettings -- Holds any other settings for the definition
@@ -55,14 +65,11 @@ local IClass__private = {}
 --- @field mergeOnInherit fun(self: IClassDefinition, key: any) -- Sets the key to be merged on inherit
 --- @field deepMergeOnInherit fun(self: IClassDefinition, key: any) -- Sets the key to be deep merged on inherit
 --- @field postInherited fun(self: IClassDefinition, klass: IClassDefinition) -- Runs after `self` inherits INTO `klass`
---- @field init fun(self: IClass, args...?: any) -- Specific initialisation steps for the ClassDefinition
---- @field new fun(args...?: any): IClass -- Creates an instance of the class according to own definition
 --- @field postInit fun(self: IClassDefinition, instance: IClass) -- Ran after the main initalisation is done
 --- @field _checkWellFormed fun(self: IClassDefinition, instance: IClass) -- Ran after WHOLE initialisation is done (Including postInit)
 --- @field checkWellFormed fun(self: IClassDefinition, instance: IClass) -- Ran after normal WellFormed Check, allowing each base class to run extra checks
 --- @field markPublic fun(self: IClassDefinition, key: any) -- Sets the key to be public (included in the instance table)
 --- @field markDefinitionOnly fun(self: IClassDefinition, key: any) -- Sets the key to only exist in the defintion (it is discarded during __index)
---- @field isAClassDefinition true -- For checks
 --- @field preIndex fun(self: IClassDefinition, this: IClass, key: any): any -- Attempts to overwrite the __index. Note that it is not guarenteed to run if a previous base class foudn a value
 --- @field postIndex fun(self: IClassDefinition, this: IClass, key: any, retValue: any): any -- Applies checks to the value to be returned and may change it. The changed value will be passed into the next base class
 --- @field preNewIndex fun(self: IClassDefinition, this: IClass, key: any): table | nil -- Tries to override and set a new index.Once again not guarenteed to actually run if other base classes set first
@@ -73,6 +80,9 @@ local IClassDefinition__private = {}
 ]]
 --- @class IClassDefinition : IClassDefinition._private, IClass._public, IClass._private
 local IClassDefinition = {}
+
+--- @class ISimpleClassDefinition : ISimpleClassDefinition._private, IClass._public, IClass._private
+local ISimpleClassDefinition = {}
 
 --- @class IClass : IClass._public, IClass._private
 --- @field isAClass true -- For checks
