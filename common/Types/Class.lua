@@ -48,6 +48,7 @@ local IClass__private = {}
 
 --- @class ISimpleClassDefinition._private
 --- @field init fun(self: IClass, args...?: any) -- Specific initialisation steps for the ClassDefinition
+--- @field _new fun(args...?: any): IClass -- Creates an instance of the class according to own definition
 --- @field new fun(args...?: any): IClass -- Creates an instance of the class according to own definition
 --- @field isAClassDefinition true -- For checks
 local ISimpleClassDefinition__private = {}
