@@ -15,6 +15,7 @@
     "Lua.workspace.ignoreDir": [
         "rom/modules/main/cc"
     ],
+    "Lua.workspace.useGitIgnore": true,
     "Lua.diagnostics.disable": [
         "param-type-mismatch"
     ],
