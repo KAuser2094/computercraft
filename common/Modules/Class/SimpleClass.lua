@@ -22,6 +22,7 @@ local private = setmetatable({}, {__mode = 'k'})
 local classDefOnly = {
     isAClassDefinition = true,
     init = true,
+    _new = true,
     new = true,
 }
 
@@ -152,8 +153,12 @@ local function MakeSimpleClassDefinition(className)
 
     cls.init = init
 
-    cls.new = function (...)
+    cls._new = function (...)
         return new(cls, ...)
+    end
+
+    cls.new = function (...)
+        return cls._new(...)
     end
 
     --- METAMETHODS

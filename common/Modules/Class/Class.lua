@@ -323,6 +323,7 @@ local function MakeClassDefinition(className)
             mergeOnInherit = true,
             deepMergeOnInherit = true,
             init = true,
+            _new = true,
             new = true,
             _checkWellFormed = true,
             checkWellFormed = true,
@@ -360,8 +361,12 @@ local function MakeClassDefinition(className)
     ]]
     cls.init = init
 
-    cls.new = function (...)
+    cls._new = function (...)
         return new(cls, ...)
+    end
+
+    cls.new = function (...)
+        cls._new(...)
     end
 
     cls.postInit = postInit
