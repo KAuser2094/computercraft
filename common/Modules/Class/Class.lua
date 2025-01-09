@@ -1,7 +1,7 @@
 local Dbg = require "common.Modules.Logger"
 local TAG = "CLASS_DEF"
 Dbg = Dbg.new()
-Dbg = Dbg:setOutputTerminal(term.current()):setTagLevel(TAG, Dbg.Levels.Warning)
+Dbg = Dbg:setOutputTerminal(term.current()):setTagLevel(TAG, Dbg.Levels.Verbose)
 
 --- Is used to define a class
 
@@ -260,7 +260,7 @@ end
 --- @param this IClass
 --- @param key any
 --- @param retValue any
-local function postIndex(cls, this, key, retValue) end
+local function postIndex(cls, this, key, retValue) return retValue end
 
 -- NEW INDEX
 
@@ -323,6 +323,7 @@ local function MakeClassDefinition(className)
             mergeOnInherit = true,
             deepMergeOnInherit = true,
             init = true,
+            _new = true,
             new = true,
             _checkWellFormed = true,
             checkWellFormed = true,
@@ -360,8 +361,12 @@ local function MakeClassDefinition(className)
     ]]
     cls.init = init
 
-    cls.new = function (...)
+    cls._new = function (...)
         return new(cls, ...)
+    end
+
+    cls.new = function (...)
+        cls._new(...)
     end
 
     cls.postInit = postInit
@@ -391,14 +396,14 @@ local function MakeClassDefinition(className)
     --- Gets the private table for the instance
     --- @param self IClass
     --- @return table
-    function cls:getPrivateTable()
+    function cls.getPrivateTable(self)
         return private[self] -- If we are holding a reference to the table, then the key still exists
     end
 
     --- Gets the private table for the instance
     --- @param self IClass
     --- @param key any Gets the private instance value at the key (This is already added to __index so you likely do not need to use this)
-    function cls:getPrivate(key)
+    function cls.getPrivate(self, key)
         if not self.isAClass then return end
         return private[self][key]
     end
@@ -406,7 +411,7 @@ local function MakeClassDefinition(className)
     --- Completely replaces the private instance table (Sometimes it is easier to get the whole table, do work, and set it back)
     --- @param self IClass
     --- @param tbl table
-    function cls:setPrivateTable(tbl)
+    function cls.setPrivateTable(self, tbl)
         if not self.isAClass then return end
         private[self] = tbl
     end
@@ -415,7 +420,7 @@ local function MakeClassDefinition(className)
     --- @param self IClass
     --- @param key any
     --- @param value any
-    function cls:setPrivate(key, value)
+    function cls.setPrivate(self, key, value)
         if not self.isAClass then return end
         private[self][key] = value
     end
@@ -534,19 +539,20 @@ local function MakeClassDefinition(className)
     })
 
     cls.__index = function (self, key)
+        Dbg.logV(TAG, "trying to find:",key)
         -- Check instances private
         local try =  cls.getPrivate(self, key)
         if try ~= nil then return try end
 
         local rawDefinition = rawget(cls, key)
-        local rawInstance = rawget(self, key)
+        Dbg.logV(TAG, "Found at definition: ", rawDefinition)
         try = _preIndex(cls, self, key)
         -- Do not return a definition only value
         -- (These checks check if the value was taken from the ClassDefinition, and if they did, to nil it if is is a definition only value)
-        try = (type(try) ~= type(rawDefinition) or try ~= rawDefinition) and try or nil
-        rawDefinition = not cls.__instanceSettings.definitionOnly[key] and rawDefinition or nil
-
-        local ret = try or rawDefinition or rawInstance or nil
+        try = (type(try) ~= type(rawDefinition) or try ~= rawDefinition) and try or nil -- nil try if just got the same as rawget on the definition
+        rawDefinition = not cls.__instanceSettings.definitionOnly[key] and rawDefinition or nil -- nil the rawget from definition if it is definition only
+        Dbg.logV(TAG, "After def only check, found at definition is:", rawDefinition)
+        local ret = try or rawDefinition or nil
 
         ret = _postIndex(cls, self, key, ret)
         return ret

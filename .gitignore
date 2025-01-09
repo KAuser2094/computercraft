@@ -43,3 +43,9 @@ luac.out
 
 .temporary*
 *.temporary/
+
+temporary*
+*temporary/
+
+# Ignores minified files (This is also used to get the LuaLS to shut up about it)
+*_min.lua

@@ -1,6 +1,6 @@
 {
     "Lua.workspace.library": [
-        "${addons}/cc-tweaked/module/library",
+        "${addons}/cc-tweaked/module/library"
     ],
     "files.exclude": {
         "rom/modules/main/cc/**/*.lua": true // We hide the files so the Lua Language server shuts up
@@ -13,9 +13,7 @@
     },
     "Lua.workspace.checkThirdParty": false,
     "Lua.workspace.ignoreDir": [
-        "rom/modules/main/cc"
+        "cc_tweaked_rom_stub/modules/main/cc"
     ],
-    "Lua.diagnostics.disable": [
-        "param-type-mismatch"
-    ],
+    "Lua.workspace.useGitIgnore": true,
 }

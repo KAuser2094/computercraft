@@ -3,6 +3,7 @@
 --- TODO:
 --- Make a "global" in the returned table that is a class that changes global default values which are used when Logger.new() is ran with no params
 --- Make a "singleton" that will cache its instance that modules may use.
+--- Make a way to "discard" certain levels (usually Fatal)
 
 local p = require "cc.pretty"
 local colours = _G.colours

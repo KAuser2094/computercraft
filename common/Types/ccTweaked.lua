@@ -1,12 +1,12 @@
 --- @meta _
 --- An "addon" to the CC Tweaked addon for the Lua Language Server (heh)
 
---- @alias ccTweaked.directionalSide 
---- | " top" 
---- | "bottom" 
---- | "left" 
+--- @alias ccTweaked.directionalSide
+--- | " top"
+--- | "bottom"
+--- | "left"
 --- | "right"
---- | "back" 
+--- | "back"
 --- | "front"
 
 --- Yes this seems a bit redundant
@@ -58,17 +58,17 @@
 --- with Bundled Cables from mods like [Project
 --- Red](https://projectredwiki.com/wiki/Main_Page), and colors on Advanced
 --- Computers and Advanced Monitors.
---- 
+---
 --- For a British English version, replace colors with colours. This alternative
 --- API is exactly the same except the colours use British English (e.g.
 --- colors.gray is spelt colours.grey).
---- 
+---
 --- On basic non-color terminals, all the colors are converted to grayscale. This
 --- means you can still use all 16 colors on the screen, but they will appear as
 --- the nearest tint of gray. You can check if a terminal supports color by using
 --- the function `term.isColor`. Grayscale colors are calculated by taking the
 --- average of the three components, i.e. `(red + green + blue) / 3`.
------- 
+------
 --- [Official Documentation](https://tweaked.cc/module/colors.html)
 colours = {}
 
@@ -160,7 +160,7 @@ colours.black = 32768
 --- colors.combine(colors.white, colors.magenta, colours.lightBlue)
 ----- > 13
 --- ```
------- 
+------
 --- [Official Documentation](https://tweaked.cc/module/colors.html#v:combine)
 function colours.combine(...) end
 
@@ -173,7 +173,7 @@ function colours.combine(...) end
 --- colors.subtract(colours.lime, colours.orange, colours.white)
 ----- > 32
 --- ```
------- 
+------
 --- [Official Documentation](https://tweaked.cc/module/colors.html#v:subtract)
 function colours.subtract(colour, ...) end
 
@@ -185,7 +185,7 @@ function colours.subtract(colour, ...) end
 --- colors.test(colors.combine(colors.white, colors.magenta, colours.lightBlue), colors.lightBlue)
 ----- > true
 --- ```
------- 
+------
 --- [Official Documentation](https://tweaked.cc/module/colors.html#v:test)
 function colours.test(set, colour) end
 
@@ -199,7 +199,7 @@ function colours.test(set, colour) end
 --- colors.packRGB(0.7, 0.2, 0.6)
 ----- > 0xb23399
 --- ```
------- 
+------
 --- [Official Documentation](https://tweaked.cc/module/colors.html#v:packRGB)
 function colours.packRGB(r, g, b) end
 
@@ -228,7 +228,7 @@ function colours.unpackRGB(hex) end
 --- colors.rgb8(0.7, 0.2, 0.6)
 ----- > 0xb23399
 --- ```
------- 
+------
 --- [Official Documentation](https://tweaked.cc/module/colors.html#v:rgb8)
 function colours.rgb8(r, g, b) end
 
@@ -245,7 +245,7 @@ function colours.rgb8(r, g, b) end
 --- colors.rgb8(0xb23399)
 ----- > 0.7, 0.2, 0.6
 --- ```
------- 
+------
 --- [Official Documentation](https://tweaked.cc/module/colors.html#v:rgb8)
 function colours.rgb8(hex) end
 
@@ -257,7 +257,7 @@ function colours.rgb8(hex) end
 --- colors.toBlit(colors.magenta)
 ----- > "2"
 --- ```
------- 
+------
 --- [Official Documentation](https://tweaked.cc/module/colors.html#v:toBlit)
 function colours.toBlit(colour) end
 
