@@ -1,4 +1,4 @@
-local cdm = require "common.Modules.Class.SimpleClass"
+local cdm = require "common.Modules.Class.Simple"
 
 --- @class TestRunner.results.item
 --- @field passed string[]
