@@ -44,7 +44,7 @@ function Test.run(self)
     local passed = nil
     local failed = nil
     for testName, fn in pairs(self.tests) do
-        self.dbg.logI(testName, "Running")
+        self.dbg.logI(testName, "Running...")
         local container = { TAG = testName }
         self:testInit(container)
         local ok, _ = pcall(fn, container)
