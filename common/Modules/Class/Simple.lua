@@ -57,7 +57,7 @@ end
 --- @param ... ISimpleClassDefinition
 --- @return ISimpleClassDefinition
 local function MakeSimpleClassDefinition(className, base, ...)
-    --- @type (ISimpleClassDefinition?)[]
+    --- @type (ISimpleClassDefinition?)[] -- NOTE: THIS COULD END UP BEING SPARSE
     local bases = { base, ... }
     Dbg.logI(TAG, "Creating ClassDef with name: " .. className)
     local cls = {}
@@ -65,6 +65,14 @@ local function MakeSimpleClassDefinition(className, base, ...)
     cls.className = className
 
     cls.inherits = { [cls.className] = cls }
+
+    -- Inheritance in a SimpleClass is just a dumb shallow copy
+    for _, b in pairs(bases) do -- Cannot use ipairs due to maybe being sparse
+        cls.inherits[b:getClassName()] = b
+        for k,v in pairs(b) do
+            cls[k] = v
+        end
+    end
 
     cls.isAClassDefinition = true
 
