@@ -137,5 +137,4 @@ end
 
 return TestRunner
 --- TODO:
---- Add option to toggle the logger (and options) to Verbose (Everything), Fails (Just the fails), Silent (Just the results), CompletelySilent (Not even the results)
 --- Better format the results printed out
