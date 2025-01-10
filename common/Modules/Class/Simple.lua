@@ -53,8 +53,12 @@ end
 
 --- Returns a simplified class definition
 --- @param className string
+--- @param base? ISimpleClassDefinition
+--- @param ... ISimpleClassDefinition
 --- @return ISimpleClassDefinition
-local function MakeSimpleClassDefinition(className)
+local function MakeSimpleClassDefinition(className, base, ...)
+    --- @type (ISimpleClassDefinition?)[]
+    local bases = { base, ... }
     Dbg.logI(TAG, "Creating ClassDef with name: " .. className)
     local cls = {}
 
@@ -172,6 +176,8 @@ local function MakeSimpleClassDefinition(className)
     cls.__index = function (self, key)
         local try =  cls.getPrivate(self, key)
         if try ~= nil then return try end
+
+        if classDefOnly[key] then return nil end -- Don't give access to this class def's class def only values
 
         return rawget(cls, key)
     end
