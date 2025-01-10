@@ -33,7 +33,7 @@ TestIClass:addTest("Class and ClassDef has fields", function (container)
     assert(container.ClassDef.isAClassDefinition) -- I already got lazy to make the messages
     assert(not container.ClassDef.isAClass, "How did ClassDef get isAClass")
 
-    
+
 end)
 
 return TestIClass
