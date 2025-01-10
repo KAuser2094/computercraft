@@ -1,7 +1,7 @@
-local cdm = require "common.Modules.Class.SimpleClass"
+local cdm = require "common.Modules.Class.Simple"
 
 --- @class TestModule : IClass
---- @field tests function[]
+--- @field tests table<string, fun(container: table)>
 --- @field testCount integer
 --- @field TAG string
 --- @field dbg Logger
@@ -25,13 +25,15 @@ end
 --- @param self TestModule
 --- @param kwargs TestModuleDefinition.new.kwargs
 function Test.init(self, kwargs)
-    -- Checks on self are in case this is inheriting anoother test module with tests,
-    -- Why you would ever do that idk.
-    self.tests = self.tests or {}
-    self.testCount = self.testCount or 0
     self.TAG = self:getClassName()
     self.dbg = kwargs.Logger
 end
+
+--- @type table<string, fun(container: table)>
+Test.tests = {}
+
+--- @type integer
+Test.testCount = 0
 
 --- Runs the tests in the test module, returning amount passed and failed
 --- @param self TestModule
@@ -61,5 +63,14 @@ end
 --- @param self TestModule
 --- @param testContainer table
 function Test.testInit(self, testContainer) end
+
+--- Adds a test to the module
+--- @param self TestModuleDefinition
+--- @param testName string
+--- @param testFn fun(container: table)
+function Test.addTest(self, testName, testFn)
+    self.tests[testName] = testFn
+    self.testCount = self.testCount + 1
+end
 
 return Test
