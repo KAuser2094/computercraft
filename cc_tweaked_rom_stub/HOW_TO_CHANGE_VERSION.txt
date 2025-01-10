@@ -4,8 +4,10 @@ To change copy the link https://github.com/cc-tweaked/CC-Tweaked/tree/<CHANGE_BR
 
 Then go to "https://gitdirectory.download/" or similar, paste in the link, download and extract.
 
-You then want to keep going into the folders (there should only be as single folder in each folder) until you reach "rom". Copy the rom folder into the root directory
+You then want to keep going into the folders (there should only be as single folder in each folder) until you reach "rom". 
 
-If you are using "bundle_minify.py" in "scripts/" then it already adds the path "rom/modules/main/" to what it should look at when require-ing.
+Copy the rom folder into the root directory and rename it to "cc_tweaked_rom_stub" and select "replace" for every option.
+
+If you are using "bundle_minify.py" in "scripts/" then it already adds the path "cc_tweaked_rom_stub/modules/main/" to what it should look at when require-ing.
 
 If you are not, then make sure you add that to your paths so the bundler can see the "cc" folder to require from.
