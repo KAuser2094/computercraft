@@ -60,4 +60,4 @@ If the logger is simply being used as a debugging tool then you should be using 
 
 ### Other
 
-In other cases you generall want each class to define their own logger. (Or have it be passed in as an argument, so connected systems can share the same logger)
+In other cases you generall want each class to define their own logger. (Or have it be passed in as an argument, so connected systems can share the same logger). Ideally changing the log location to `log/<appropriate name>`
