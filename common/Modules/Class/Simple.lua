@@ -4,7 +4,7 @@
 local Dbg = require "common.Modules.Logger"
 local TAG = "SIMPLE_CLASS_DEF"
 Dbg = Dbg.new()
-Dbg = Dbg:setOutputTerminal(term.current()):setTagLevel(TAG, Dbg.Levels.Warning)
+Dbg = Dbg.setOutputTerminal(term.current()).setTagLevel(TAG, Dbg.Levels.Warning)
 
 --- Gets the string className from the valid types
 --- @param klass string | IClassDefinition | IClass
@@ -24,6 +24,10 @@ local classDefOnly = {
     init = true,
     _new = true,
     new = true,
+}
+
+local doNotInherit = {
+    className = true,
 }
 
 --- Called when creating an instance
@@ -70,7 +74,9 @@ local function MakeSimpleClassDefinition(className, base, ...)
     for _, b in pairs(bases) do -- Cannot use ipairs due to maybe being sparse
         cls.inherits[b:getClassName()] = b
         for k,v in pairs(b) do
-            cls[k] = v
+            if not doNotInherit[k] then
+                cls[k] = v
+            end
         end
     end
 

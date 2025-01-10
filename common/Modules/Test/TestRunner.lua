@@ -1,5 +1,7 @@
 local cdm = require "common.Modules.Class.Simple"
 
+local TAG = "TEST_RUNNER"
+
 --- @class TestRunner.results.item
 --- @field passed string[]
 --- @field failed string[]
@@ -35,43 +37,49 @@ function TestRunner.init(self, kwargs)
     self.totalTests = 0
     self.results = {}
     self.dbg = kwargs.Logger
+
+    self.dbg.logV(TAG, "Created Test Runner")
 end
 
---- @param self TestRunner
+--- @param this TestRunner
 --- @param testModule TestModuleDefinition
-function TestRunner.addTestModule(self, testModule)
+function TestRunner.addTestModule(this, testModule)
     local module = testModule.new{
-        Logger = self.dbg,
+        Logger = this.dbg,
     }
-    self.totalTests = self.totalTests + module.testCount
-    table.insert(self.modules, module)
+    this.totalTests = this.totalTests + module.testCount
+    table.insert(this.modules, module)
 end
 
---- @param self TestRunner
+--- @param this TestRunner
 --- @return TestRunner.results results
-function TestRunner.run(self)
-    self.dbg.logI("TEST RUNNER", "Starting Tests")
+function TestRunner.run(this)
+    this.dbg.logI(TAG, "Starting Tests")
     local totalPassed = 0
     local totalFailed = 0
-    for _, module in ipairs(self.modules) do
+    for _, module in ipairs(this.modules) do
         local modName = module.TAG
+
         local passed, failed = module:run()
         if passed then
-            self.results[modName] = self.results[modName] or {}
-            self.results[modName].passed = passed
+            this.results[modName] = this.results[modName] or {}
+            this.results[modName].passed = passed
             totalPassed = totalPassed + #passed
         end
         if failed then
-            self.results[modName] = self.results[modName] or {}
-            self.results[modName].failed = failed
+            this.results[modName] = this.results[modName] or {}
+            this.results[modName].failed = failed
             totalFailed = totalFailed + #failed
         end
     end
     -- TODO: Display total results better
-    print("Passed:", totalPassed, "/", self.totalTests)
-    print("Failed:", totalFailed, "/", self.totalTests)
+    print("Passed:", totalPassed, "/", this.totalTests)
+    print("Failed:", totalFailed, "/", this.totalTests)
 
-    return self.results
+    return this.results
 end
 
 return TestRunner
+--- TODO:
+--- Add option to toggle the logger (and options) to Verbose (Everything), Fails (Just the fails), Silent (Just the results), CompletelySilent (Not even the results)
+--- Better format the results printed out

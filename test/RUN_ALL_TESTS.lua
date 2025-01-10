@@ -7,7 +7,7 @@ Dbg = Dbg.setOutputTerminal(term.current()).setGlobalLevel(Dbg.Levels.Verbose)
 local TestRunner = TestRunnerDef.new({ Logger = Dbg })
 
 -- Add Modules
-
+TestRunner:addTestModule(require("test.IClass"))
 
 -- Run tests
 local _ = TestRunner:run()

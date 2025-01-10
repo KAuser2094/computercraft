@@ -1,18 +1,21 @@
 --- @diagnostic disable: undefined-field
 --- Tests the implentation of the basic IClass from SimpleClass and Class.
-local SimpleClass = require "common.Modules.Class.Simple"
-local TestModule = require "common.Modules.Test.Test"
-local cdf = require("common.Modules.Class")("Test_Class")
-local scdf = require("common.Modules.Class.Simple")("Test_SimpleClass")
-local cdi = cdf.new()
-local scdi = scdf.new()
+local SimpleClass = assert(require "common.Modules.Class.Simple")
+local TestModule = assert(require "common.Modules.Test.Test")
+local cdf = assert(require("common.Modules.Class")("Test_Class"))
+
+local scdf = assert(require("common.Modules.Class.Simple")("Test_SimpleClass"))
+local cdi = assert(cdf.new())
+local scdi = assert(scdf.new())
 
 --- @class TestIClassDefinition : TestModuleDefinition
 local TestIClass = SimpleClass("Test_IClass", TestModule)
 
+function TestIClass.init(this, kwargs)
+    TestModule.init(this, kwargs)
+end
 
-function TestIClass.testInit(self, c)
-    c = {}
+function TestIClass.testInit(this, c)
     c.ClassDef = cdf
     c.Class = cdi
     c.SimpleClassDef = scdf
@@ -60,25 +63,25 @@ TestIClass:addTest("Check has fields", function (container)
     }
 
     for _, key in pairs(ClassFields) do
-        assert(container.Class[key], "Class is missing key:", key)
-        assert(container.SimpleClass[key], "SimpleClass is missing key:", key)
-        assert(container.ClassDef[key], "ClassDef is missing key:", key)
-        assert(container.SimpleClassDef[key], "SimpleClass is missing key:", key)
+        assert(container.Class[key], "Class is missing key: " .. key)
+        assert(container.SimpleClass[key], "SimpleClass is missing key: " .. key)
+        assert(container.ClassDef[key], "ClassDef is missing key:" ..  key)
+        assert(container.SimpleClassDef[key], "SimpleClass is missing key: " .. key)
     end
 
     for _, key in pairs(SimpleClassDefOnlyFields) do
-        assert(container.SimpleClassDef[key], "SimpleClassDef is missing key:", key)
-        assert(not container.SimpleClass[key], "SimpleClass has key it shouldn't:", key)
+        assert(container.SimpleClassDef[key], "SimpleClassDef is missing key: " .. key)
+        assert(not container.SimpleClass[key], "SimpleClass has key it shouldn't: " .. key)
     end
 
     for _, key in pairs(ClassDefFields) do
-        assert(container.ClassDef[key], "ClassDef is missing key:", key)
-        assert(container.Class[key], "Class is missing key (within ClassDef):", key)
+        assert(container.ClassDef[key], "ClassDef is missing key: " .. key)
+        assert(container.Class[key], "Class is missing key (within ClassDef): " .. key)
     end
 
     for _, key in pairs(ClassDefOnlyFields) do
-        assert(container.ClassDef[key], "ClassDef is missing key:", key)
-        assert(not container.Class[key], "Class has key defined it shouldn't, key:", key)
+        assert(container.ClassDef[key], "ClassDef is missing key: " .. key)
+        assert(not container.Class[key], "Class has key defined it shouldn't, key: " .. key)
     end
 end)
 

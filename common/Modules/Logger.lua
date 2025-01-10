@@ -4,6 +4,7 @@
 --- Make a "global" in the returned table that is a class that changes global default values which are used when Logger.new() is ran with no params
 --- Make a "singleton" that will cache its instance that modules may use.
 --- Make a way to "discard" certain levels (usually Fatal)
+--- Add a hook into "error" and log the stack trace before it errors out
 
 local p = require "cc.pretty"
 local colours = _G.colours
@@ -26,28 +27,6 @@ local DebugLevel = {
     Debug = {prefix = "[DBG]", colour = colours.blue, severity = 5}, --- @type Logger.LoggerLevel
     Verbose = {prefix = "[VRB]", colour = colours.cyan, severity = 6}, --- @type Logger.LoggerLevel
 }
-
---- @type Logger[]
-local LoggerInstances = setmetatable({}, { __mode = "v" }) -- If this is the only reference to the instance, we drop (nil) that instance
-
--- override error function to print stack traceback into logs
-if _G.overrides == nil then
-    _G.overrides = {}
-end
-if _G.overrides.nativeError == nil then
-    _G.overrides.nativeError = error
-    _G.error = function(message, level)
-        level = level and level + 1 or nil
-
-        local trace = debug.traceback()
-        local logMsg = p.render(p.concat(p.pretty(trace), p.space_line, p.pretty(message), p.line))
-        for _, instance in pairs(LoggerInstances) do -- We cannot guarentee an array as the weak table may drop an instance from anywhere.
-            instance.logF("", logMsg)
-        end
-
-        _G.overrides.nativeError(message, level)
-    end
-end
 
 --- @class Logger.new.kwargs The form the table passed into "new" should be when creating a new logger instance
 --- @field path? string Path of the log file, defaults to "./log.txt"
@@ -72,19 +51,19 @@ local function new(kwargs)
     --- @type Logger.Log[]
     Logs = {}
 
-    --- @type table<string, Logger.LoggerLevel>
-    Tags = {}
 
     --- @class Logger
     local this = {}
-    table.insert(LoggerInstances, this) -- For use when error occurs
+
+    --- @type table<string, Logger.LoggerLevel>
+    this.Tags = {}
 
     this.Levels = DebugLevel
 
     --- Sets path to log file
     --- @param _path filePath
     --- @return Logger self For chaining
-    function this:setPath(_path)
+    function this.setPath(_path)
         path = _path
         return this
     end
@@ -92,7 +71,7 @@ local function new(kwargs)
     --- Sets Global Level
     --- @param level Logger.LoggerLevel
     --- @return Logger  self For chaining
-    function this:setGlobalLevel(level)
+    function this.setGlobalLevel(level)
         globalLevel = level
         return this
     end
@@ -100,7 +79,7 @@ local function new(kwargs)
     --- Sets the amount of logs to keep
     --- @param _logsToKeep integer
     --- @return Logger  self For chaining
-    function this:setLogsToKeep(_logsToKeep)
+    function this.setLogsToKeep(_logsToKeep)
         logsToKeep = _logsToKeep
         return this
     end
@@ -108,7 +87,7 @@ local function new(kwargs)
     --- Sets the output terminal
     --- @param terminal ccTweaked.term.Redirect
     --- @return Logger self For chaining
-    function this:setOutputTerminal(terminal)
+    function this.setOutputTerminal(terminal)
         outputTerminal = terminal
         return this
     end
@@ -117,12 +96,12 @@ local function new(kwargs)
     --- @param tag string to change level
     --- @param level Logger.LoggerLevel Level to change to
     --- @return Logger self For chaining
-    function this:setTagLevel(tag, level)
-        Tags[tag] = level
+    function this.setTagLevel(tag, level)
+        this.Tags[tag] = level
         return this
     end
 
-    this:setTagLevel("", DebugLevel.Verbose) -- Anything logged with no tag should always print.
+    this.setTagLevel("", DebugLevel.Verbose) -- Anything logged with no tag should always print.
 
     --- Writes everything in "Logs" to the log file defined by path
     local function addToLogFile()
@@ -167,9 +146,9 @@ local function new(kwargs)
     --- @param level Logger.LoggerLevel The level to log at
     --- @param ... any Anything you wish to log
     local function log(tag, level, ...)
-        if not Tags[tag] then Tags[tag] = globalLevel end
+        if not this.Tags[tag] then this.setTagLevel(tag, globalLevel) end
 
-        if level.severity <= Tags[tag].severity then
+        if level.severity <= this.Tags[tag].severity then
             local logDoc = buildLogDoc(...)
             local prefix = buildLogPrefix(tag, level)
             local fullDoc = p.concat(prefix, p.space, logDoc)

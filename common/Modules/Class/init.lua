@@ -1,7 +1,7 @@
 local Dbg = require "common.Modules.Logger"
 local TAG = "CLASS_DEF"
 Dbg = Dbg.new()
-Dbg = Dbg:setOutputTerminal(term.current()):setTagLevel(TAG, Dbg.Levels.Verbose)
+Dbg = Dbg.setOutputTerminal(term.current()).setTagLevel(TAG, Dbg.Levels.Warning)
 
 --- Is used to define a class
 
@@ -98,7 +98,7 @@ local function postInherited(self, klass) end
  --- inherits this into the given class definition as a base class
 --- @param self IClassDefinition
  --- @param klass IClassDefinition
-local function inheritsInto(self, klass)
+local function inheritInto(self, klass)
     _basicInheritInto(self, klass)
 end
 
@@ -106,7 +106,7 @@ end
 --- @param self IClassDefinition
 --- @param klass IClassDefinition Base class to inherit from
 --- @param ... IClassDefinition ...
-local function inheritsFrom(self, klass, ...)
+local function inheritFrom(self, klass, ...)
     local klasses = { ... }
     for i=#klasses, 1, -1 do
         local kls = klasses[i]
@@ -317,11 +317,13 @@ local function MakeClassDefinition(className)
         definitionOnly = { -- This check is implemented in the __index method.
             __inheritanceSettings = true,
             isAClassDefinition = true,
-            inheritsInto = true,
-            inheritsFrom = true,
+            inheritInto = true,
+            inheritFrom = true,
             doNotInherit = true,
             mergeOnInherit = true,
             deepMergeOnInherit = true,
+            postInherited = true,
+            postInit = true,
             init = true,
             _new = true,
             new = true,
@@ -344,9 +346,9 @@ local function MakeClassDefinition(className)
         protectEffectiveKeys = true,
     }
 
-    cls.inheritsInto = inheritsInto
+    cls.inheritInto = inheritInto
 
-    cls.inheritsFrom = inheritsFrom
+    cls.inheritFrom = inheritFrom
 
     cls.doNotInherit = doNotInherit
 
@@ -366,7 +368,7 @@ local function MakeClassDefinition(className)
     end
 
     cls.new = function (...)
-        cls._new(...)
+        return cls._new(...)
     end
 
     cls.postInit = postInit
