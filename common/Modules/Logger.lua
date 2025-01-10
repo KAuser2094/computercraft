@@ -237,6 +237,52 @@ local function new(kwargs)
         log(tag, DebugLevel.Verbose, ...)
     end
 
+    --- Errors the program at the given level, printing out the message (and usually some info of error location before it). Will also log a Fatal level log at NoTag.
+    --- @param message? any
+    --- @param level? integer
+    function this.error(message, level) -- errorNoTag
+        level = level and level + 1 or level -- Increase level if it was given
+
+        this.errorWithTag("", message, level)
+    end
+
+    --- Errors the program at the given level, printing out the message (and usually some info of error location before it). Will also log a Fatal level log at the given tag.
+    --- @param tag string
+    --- @param message? any
+    --- @param level? integer
+    function this.errorWithTag(tag, message, level)
+        level = level and level + 1 or level -- Increase level if it was given
+
+        local trace = debug.traceback()
+        local logMsg = p.render(p.concat(p.pretty(trace), p.space_line, p.pretty(message), p.line))
+        this.logF(tag, logMsg)
+
+        error(message, level)
+    end
+
+    --- Asserts that `v` is truthy and if so returns ALL arguments, otherwise assertion error and displays the `message` given.
+    --- Also logs fatal if the assertion fails at NoTag
+    --- @param v? any -- Why the heck is this optional? I am just following how native assert() works...
+    --- @param message? any
+    --- @param ...? any
+    function this.assert(v, message, ...)
+        return this.assertWithTag("", v, message, ...)
+    end
+
+    --- Asserts that `v` is truthy and if so returns ALL arguments EXCEPT `tag`, otherwise assertion error and displays the `message` given.
+    --- Also logs fatal if the assertion fails at `tag`
+    --- @param v? any -- Why the heck is this optional? I am just following how native assert() works...
+    --- @param message? any
+    --- @param ...? any
+    function this.assertWithTag(tag, v, message, ...)
+        if v then
+            return assert(v, message, ...) -- Technically do not need to assert here, but in case someone is hooking into assert I will
+        else
+            this.logF(tag, message)
+            return assert(v, message, ...)
+        end
+    end
+
     return this
 end
 

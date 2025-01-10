@@ -22,7 +22,7 @@ function TestIClass.testInit(this, c)
     c.SimpleClass = scdi
 end
 
---- @class TestIClass.container
+--- @class TestIClass.container : TestModule.container
 --- @field ClassDef IClassDefinition
 --- @field Class IClass
 --- @field SimpleClassDef ISimpleClassDefinition
@@ -32,14 +32,17 @@ end
 TestIClass:addTest("Check has fields", function (container)
     --- @cast container TestIClass.container
 
-    assert(container.Class.isAClass, "Class does not have isAClass")
-    assert(container.SimpleClass.isAClass)
-    assert(not container.Class.isAClassDefinition, "Class should not have isAClassDefinition")
-    assert(not container.SimpleClass.isAClassDefinition)
-    assert(container.ClassDef.isAClassDefinition) -- I already got lazy to make the messages
-    assert(container.SimpleClassDef.isAClassDefinition)
-    assert(not container.SimpleClassDef.isAClass)
-    assert(not container.ClassDef.isAClass, "How did ClassDef get isAClass")
+    local TAG = container.TAG
+    local Dbg = container.Logger
+
+    Dbg.assertWithTag(TAG, container.Class.isAClass, "Class does not have isAClass")
+    Dbg.assertWithTag(TAG, container.SimpleClass.isAClass)
+    Dbg.assertWithTag(TAG, not container.Class.isAClassDefinition, "Class should not have isAClassDefinition")
+    Dbg.assertWithTag(TAG, not container.SimpleClass.isAClassDefinition)
+    Dbg.assertWithTag(TAG, container.ClassDef.isAClassDefinition) -- I already got lazy to make the messages
+    Dbg.assertWithTag(TAG, container.SimpleClassDef.isAClassDefinition)
+    Dbg.assertWithTag(TAG, not container.SimpleClassDef.isAClass)
+    Dbg.assertWithTag(TAG, not container.ClassDef.isAClass, "How did ClassDef get isAClass")
 
     local ClassFields = {
         "getClassName", "getAllClassNames", "inheritsClass", "isExactClass", "isClass",
@@ -63,25 +66,25 @@ TestIClass:addTest("Check has fields", function (container)
     }
 
     for _, key in pairs(ClassFields) do
-        assert(container.Class[key], "Class is missing key: " .. key)
-        assert(container.SimpleClass[key], "SimpleClass is missing key: " .. key)
-        assert(container.ClassDef[key], "ClassDef is missing key:" ..  key)
-        assert(container.SimpleClassDef[key], "SimpleClass is missing key: " .. key)
+        Dbg.assertWithTag(TAG, container.Class[key], "Class is missing key: " .. key)
+        Dbg.assertWithTag(TAG, container.SimpleClass[key], "SimpleClass is missing key: " .. key)
+        Dbg.assertWithTag(TAG, container.ClassDef[key], "ClassDef is missing key:" ..  key)
+        Dbg.assertWithTag(TAG, container.SimpleClassDef[key], "SimpleClass is missing key: " .. key)
     end
 
     for _, key in pairs(SimpleClassDefOnlyFields) do
-        assert(container.SimpleClassDef[key], "SimpleClassDef is missing key: " .. key)
-        assert(not container.SimpleClass[key], "SimpleClass has key it shouldn't: " .. key)
+        Dbg.assertWithTag(TAG, container.SimpleClassDef[key], "SimpleClassDef is missing key: " .. key)
+        Dbg.assertWithTag(TAG, not container.SimpleClass[key], "SimpleClass has key it shouldn't: " .. key)
     end
 
     for _, key in pairs(ClassDefFields) do
-        assert(container.ClassDef[key], "ClassDef is missing key: " .. key)
-        assert(container.Class[key], "Class is missing key (within ClassDef): " .. key)
+        Dbg.assertWithTag(TAG, container.ClassDef[key], "ClassDef is missing key: " .. key)
+        Dbg.assertWithTag(TAG, container.Class[key], "Class is missing key (within ClassDef): " .. key)
     end
 
     for _, key in pairs(ClassDefOnlyFields) do
-        assert(container.ClassDef[key], "ClassDef is missing key: " .. key)
-        assert(not container.Class[key], "Class has key defined it shouldn't, key: " .. key)
+        Dbg.assertWithTag(TAG, container.ClassDef[key], "ClassDef is missing key: " .. key)
+        Dbg.assertWithTag(TAG, not container.Class[key], "Class has key defined it shouldn't, key: " .. key)
     end
 end)
 

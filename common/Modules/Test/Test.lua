@@ -36,6 +36,10 @@ Test.tests = {}
 --- @type integer
 Test.testCount = 0
 
+--- @class TestModule.container
+--- @field TAG string
+--- @field Logger Logger
+
 --- Runs the tests in the test module, returning amount passed and failed
 --- @param this TestModule
 --- @return string[]? passed
@@ -46,14 +50,13 @@ function Test.run(this)
     local failed = nil
     for testName, fn in pairs(this.tests) do
         this.dbg.logI(testName, "Running...")
-        local container = { TAG = testName }
+        local container = { TAG = testName, Logger = this.dbg }
         this:testInit(container)
         local ok, err = pcall(fn, container)
         if ok then
             passed = passed or {}
             table.insert(passed, testName)
         else
-            this.dbg.logE(this.TAG, err)
             failed = failed or {}
             table.insert(failed, testName)
         end
