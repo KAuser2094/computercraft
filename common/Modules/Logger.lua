@@ -85,11 +85,17 @@ local function new(kwargs)
     end
 
     --- Sets the output terminal
-    --- @param terminal ccTweaked.term.Redirect
+    --- @param terminal? ccTweaked.term.Redirect
     --- @return Logger self For chaining
     function this.setOutputTerminal(terminal)
         outputTerminal = terminal
         return this
+    end
+
+    -- Returns the outputTerminal (if any)
+    --- @return ccTweaked.term.Redirect? outputTerminal
+    function this.getOutputTerminal()
+        return outputTerminal
     end
 
     --- Sets the tag to the passed in leve
