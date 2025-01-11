@@ -17,7 +17,7 @@
 --- @field protectEffectiveKeys boolean -- Toggle whether we error if the class tries to set a key that would overwrite an effective key
 
 
---- @alias _C_lass._private.inherits table<string, ClassDefinition>
+--- @alias common._C_lass._private.inherits table<string, common.Class.ClassDefinition>
 
 --[[
     The fields and methods we want public to the user
@@ -25,21 +25,21 @@
 --- @class _C_lass._public
 --- @field getClassName fun(): string -- Returns the classname of the class from its defintion
 --- @field getAllClassNames fun(): string[] -- Retirms all classNames from the class and its bases
---- @field inheritsClass fun(self: Class, klass: Class | ClassDefinition | string): boolean -- Checks if the passed in class is one it inherits
---- @field isExactClass fun(self: Class, klass: Class | ClassDefinition | string): boolean -- Checks if top level class is the passed in class
---- @field isClass fun(self: Class, klass: Class | ClassDefinition | string): boolean -- Checks if the passed in class matches the current of inherited
+--- @field inheritsClass fun(self: common.Class.ClassOrDefinition, klass: common.Class.ClassOrDefinition | string): boolean -- Checks if the passed in class is one it inherits
+--- @field isExactClass fun(self: common.Class.ClassOrDefinition, klass: common.Class.ClassOrDefinition| string): boolean -- Checks if top level class is the passed in class
+--- @field isClass fun(self: common.Class.ClassOrDefinition, klass: common.Class.ClassOrDefinition | string): boolean -- Checks if the passed in class matches the current of inherited
 local Class__public = {}
 
 --[[
     The fields and methods that (could) be used by the class and we don't want visible in the instance table
 ]]
---- @class _C_lass._private -- The fields and methods we want private to the user (Hidden using __index)
+--- @class _C_lass._private : common.Modules.expect.IExpect -- The fields and methods we want private to the user (Hidden using __index)
 --- @field className string -- Throws an error if same program tries to define the same className twice. (MAYBE: change to just add increasing digits after)
---- @field inherits _C_lass._private.inherits -- Holds all the className's this inherits from
---- @field getPrivateTable fun(self: Class): table -- Gets the instances private table
---- @field getPrivate fun(self: Class, key: any): any -- Gets the value at the instances private table using the key
---- @field setPrivateTable fun(self: Class, tbl: table) -- Replaces the instance's private table with the given
---- @field setPrivate fun(self: Class, key: any, value: any) -- Sets the key-value to the instnace's private table
+--- @field inherits common._C_lass._private.inherits -- Holds all the className's this inherits from
+--- @field getPrivateTable fun(self: common.Class.Class): table -- Gets the instances private table
+--- @field getPrivate fun(self: common.Class.Class, key: any): any -- Gets the value at the instances private table using the key
+--- @field setPrivateTable fun(self: common.Class.Class, tbl: table) -- Replaces the instance's private table with the given
+--- @field setPrivate fun(self: common.Class.Class, key: any, value: any) -- Sets the key-value to the instnace's private table
 local Class__private = {}
 
 --[[
@@ -47,9 +47,9 @@ local Class__private = {}
 ]]
 
 --- @class _S_imple_C_lass_D_efinition._private
---- @field init fun(self: Class, args...?: any) -- Specific initialisation steps for the ClassDefinition
---- @field _new fun(args...?: any): Class -- Creates an instance of the class according to own definition
---- @field new fun(args...?: any): Class -- Creates an instance of the class according to own definition
+--- @field init fun(self: common.Class.Class, args...?: any) -- Specific initialisation steps for the ClassDefinition
+--- @field _new fun(args...?: any): common.Class.Class -- Creates an instance of the class according to own definition
+--- @field new fun(args...?: any): common.Class.Class -- Creates an instance of the class according to own definition
 --- @field isAClassDefinition true -- For checks
 local SimpleClassDefinition__private = {}
 
@@ -60,36 +60,38 @@ local SimpleClassDefinition__private = {}
 --- @field __inheritanceSettings _C_lass_D_efinition._private.__inheritanceSettings -- Holds settings for inheritance
 --- @field __instanceSettings _C_lass_D_efinition._private.__instanceSettings -- Holds settings for creating instances
 --- @field __otherSettings _C_lass_D_efinition._private.__otherSettings -- Holds any other settings for the definition
---- @field inheritInto fun(self: ClassDefinition, klass: ClassDefinition) -- Use yourself as base ClassDefition and inherit
---- @field inheritFrom fun(self: ClassDefinition, klass: ClassDefinition, ...?: ClassDefinition) -- taken in multiple base ClassDefinitions and inherit in backwards
---- @field doNotInherit fun(self: ClassDefinition, key: any) -- Sets the key to not be inherited
---- @field mergeOnInherit fun(self: ClassDefinition, key: any) -- Sets the key to be merged on inherit
---- @field deepMergeOnInherit fun(self: ClassDefinition, key: any) -- Sets the key to be deep merged on inherit
---- @field postInherited fun(self: ClassDefinition, klass: ClassDefinition) -- Runs after `self` inherits INTO `klass`
---- @field postInit fun(self: ClassDefinition, instance: Class) -- Ran after the main initalisation is done
---- @field _checkWellFormed fun(self: ClassDefinition, instance: Class) -- Ran after WHOLE initialisation is done (Including postInit)
---- @field checkWellFormed fun(self: ClassDefinition, instance: Class) -- Ran after normal WellFormed Check, allowing each base class to run extra checks
---- @field markPublic fun(self: ClassDefinition, key: any) -- Sets the key to be public (included in the instance table)
---- @field markDefinitionOnly fun(self: ClassDefinition, key: any) -- Sets the key to only exist in the defintion (it is discarded during __index)
---- @field preIndex fun(self: ClassDefinition, this: Class, key: any): any -- Attempts to overwrite the __index. Note that it is not guarenteed to run if a previous base class foudn a value
---- @field postIndex fun(self: ClassDefinition, this: Class, key: any, retValue: any): any -- Applies checks to the value to be returned and may change it. The changed value will be passed into the next base class
---- @field preNewIndex fun(self: ClassDefinition, this: Class, key: any): table | nil -- Tries to override and set a new index.Once again not guarenteed to actually run if other base classes set first
+--- @field inheritInto fun(self: common.Class.ClassDefinition, klass: common.Class.ClassDefinition) -- Use yourself as base ClassDefition and inherit
+--- @field inheritFrom fun(self: common.Class.ClassDefinition, klass: common.Class.ClassDefinition, ...?: common.Class.ClassDefinition) -- taken in multiple base ClassDefinitions and inherit in backwards
+--- @field doNotInherit fun(self: common.Class.ClassDefinition, key: any) -- Sets the key to not be inherited
+--- @field mergeOnInherit fun(self: common.Class.ClassDefinition, key: any) -- Sets the key to be merged on inherit
+--- @field deepMergeOnInherit fun(self: common.Class.ClassDefinition, key: any) -- Sets the key to be deep merged on inherit
+--- @field postInherited fun(self: common.Class.ClassDefinition, klass: common.Class.ClassDefinition) -- Runs after `self` inherits INTO `klass`
+--- @field postInit fun(self: common.Class.ClassDefinition, instance: common.Class.Class) -- Ran after the main initalisation is done
+--- @field _checkWellFormed fun(self: common.Class.ClassDefinition, instance: common.Class.Class) -- Ran after WHOLE initialisation is done (Including postInit)
+--- @field checkWellFormed fun(self: common.Class.ClassDefinition, instance: common.Class.Class) -- Ran after normal WellFormed Check, allowing each base class to run extra checks
+--- @field markPublic fun(self: common.Class.ClassDefinition, key: any) -- Sets the key to be public (included in the instance table)
+--- @field markDefinitionOnly fun(self: common.Class.ClassDefinition, key: any) -- Sets the key to only exist in the defintion (it is discarded during __index)
+--- @field preIndex fun(self: common.Class.ClassDefinition, this: common.Class.Class, key: any): any -- Attempts to overwrite the __index. Note that it is not guarenteed to run if a previous base class foudn a value
+--- @field postIndex fun(self: common.Class.ClassDefinition, this: common.Class.Class, key: any, retValue: any): any -- Applies checks to the value to be returned and may change it. The changed value will be passed into the next base class
+--- @field preNewIndex fun(self: common.Class.ClassDefinition, this: common.Class.Class, key: any): table | nil -- Tries to override and set a new index.Once again not guarenteed to actually run if other base classes set first
 local ClassDefinition__private = {}
 
 --[[
     Actual Classes
 ]]
---- @class ClassDefinition : _C_lass_D_efinition._private, _C_lass._public, _C_lass._private
---- @field getBaseClassDefinition fun(): ClassDefinition -- Gets an unchanged base definition
+--- @class common.Class.ClassDefinition : _C_lass_D_efinition._private, _C_lass._public, _C_lass._private
+--- @field getBaseClassDefinition fun(): common.Class.ClassDefinition -- Gets an unchanged base definition
 local ClassDefinition = {}
 
---- @class SimpleClassDefinition : _S_imple_C_lass_D_efinition._private, _C_lass._public, _C_lass._private
---- @field getBaseClassDefinition fun(): SimpleClassDefinition -- Gets an unchanged base simple definition
+--- @class common.Class.SimpleClassDefinition : _S_imple_C_lass_D_efinition._private, _C_lass._public, _C_lass._private
+--- @field getBaseClassDefinition fun(): common.Class.SimpleClassDefinition -- Gets an unchanged base simple definition
 local SimpleClassDefinition = {}
 
---- @class IClass : _C_lass._public
+--- @class common.Class.IClass : _C_lass._public
 --- @field isAClass true
 local IClass = {}
 
---- @class Class : IClass, _C_lass._private
+--- @class common.Class.Class : common.Class.IClass, _C_lass._private
 local Class = {}
+
+--- @alias common.Class.ClassOrDefinition common.Class.Class | common.Class.SimpleClassDefinition | common.Class.ClassDefinition

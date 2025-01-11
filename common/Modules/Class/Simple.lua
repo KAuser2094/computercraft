@@ -1,24 +1,23 @@
 -- A HEAVILY stripped down ClassDefinition that provides enough that it can still provide a @type Class
 -- "Simple" compared to normal Class, obviously this is still quite complicated compared to other class implementations
+local utils = require "common.Modules.Class.utils"
 
 local Dbg = require "common.Modules.Logger"
 local TAG = "SIMPLE_CLASS_DEF"
 Dbg = Dbg.singleton
 Dbg = Dbg.setTagLevel(TAG, Dbg.Levels.Warning)
 
-local private = setmetatable({}, {__mode = 'k'})
-
---- @type SimpleClassDefinition
+--- @type common.Class.SimpleClassDefinition
 local BASE_CLASS_DEFINITION
 
 --- Returns an empty Class Definition (just in case you need to overwrite it)
---- @return SimpleClassDefinition
+--- @return common.Class.SimpleClassDefinition
 local function getBaseClassDefinition()
     return BASE_CLASS_DEFINITION
 end
 
 --- Gets the string className from the valid types
---- @param klass string | ClassDefinition | Class
+--- @param klass string | common.Class.ClassDefinition | common.Class.Class
 --- @return string | nil  klassName Returns nil if not a valid type
 local function getClassNameFromTypesWithIt(klass)
     Dbg.logV(TAG, "Getting ClassName from:",klass)
@@ -40,38 +39,13 @@ local doNotInherit = {
     className = true,
 }
 
---- Called when creating an instance
---- @param self Class
---- @param ... any The parameters
-local function init(self, ...) end
-
---- Creates an instance given a definition
---- @param definition SimpleClassDefinition
---- @param ... any The parameters to pass into the `init` function
---- @return Class instance
-local function new(definition, ...)
-    local this = {}
-
-    private[this] = {} -- Add a private instance variable table (Let's you hide instance fields, call getPrivateTable() to get the table back)
-
-    this.isAClass = true
-
-    setmetatable(this, definition)
-
-    if definition.init then -- It should always exist...
-        definition.init(this, ...)
-    end
-
-    return this
-end
-
 --- Returns a simplified class definition
 --- @param className string
---- @param base? SimpleClassDefinition
---- @param ... SimpleClassDefinition
---- @return SimpleClassDefinition
+--- @param base? common.Class.SimpleClassDefinition
+--- @param ... common.Class.SimpleClassDefinition
+--- @return common.Class.SimpleClassDefinition
 local function MakeSimpleClassDefinition(className, base, ...)
-    --- @type (SimpleClassDefinition?)[] -- NOTE: THIS COULD END UP BEING SPARSE
+    --- @type (common.Class.SimpleClassDefinition?)[] -- NOTE: THIS COULD END UP BEING SPARSE
     local bases = { base, ... }
     Dbg.logI(TAG, "Creating ClassDef with name: " .. className)
     local cls = {}
@@ -94,37 +68,14 @@ local function MakeSimpleClassDefinition(className, base, ...)
 
     --- PRIVATE
 
-    --- Gets the private table for the instance
-    --- @param self Class
-    --- @return table
-    function cls:getPrivateTable()
-        return private[self] -- If we are holding a reference to the table, then the key still exists
-    end
+    cls.getPrivateTable = utils.getPrivateTable
 
-    --- Gets the private table for the instance
-    --- @param self Class
-    --- @param key any Gets the private instance value at the key (This is already added to __index so you likely do not need to use this)
-    function cls:getPrivate(key)
-        if not self.isAClass then return end
-        return private[self][key]
-    end
+    cls.getPrivate = utils.getPrivate
 
-    --- Completely replaces the private instance table (Sometimes it is easier to get the whole table, do work, and set it back)
-    --- @param self Class
-    --- @param tbl table
-    function cls:setPrivateTable(tbl)
-        if not self.isAClass then return end
-        private[self] = tbl
-    end
+    cls.setPrivateTable = utils.setPrivateTable
 
-    --- Sets a private instance key-value pair (user won't be able to see it in the instance table)
-    --- @param self Class
-    --- @param key any
-    --- @param value any
-    function cls:setPrivate(key, value)
-        if not self.isAClass then return end
-        private[self][key] = value
-    end
+    cls.setPrivate = utils.setPrivate
+
 
     --- CLASS NAME / TYPE CHECKS AND OTHER
 
@@ -141,7 +92,7 @@ local function MakeSimpleClassDefinition(className, base, ...)
     end
 
     --- Checks if thhe class inherits the given klass
-    --- @param klass string | ClassDefinition | Class
+    --- @param klass string | common.Class.ClassDefinition | common.Class.Class
     --- @return boolean
     function cls:inheritsClass(klass)
         local klassName = getClassNameFromTypesWithIt(klass)
@@ -154,7 +105,7 @@ local function MakeSimpleClassDefinition(className, base, ...)
     end
 
     --- Checks if thhe class is an exact instance of the given klass
-    --- @param klass string | ClassDefinition | Class
+    --- @param klass string | common.Class.ClassDefinition | common.Class.Class
     --- @return boolean
     function cls:isExactClass(klass)
         local klassName = getClassNameFromTypesWithIt(klass)
@@ -164,7 +115,7 @@ local function MakeSimpleClassDefinition(className, base, ...)
     end
 
     --- Checks if thhe class is exactly or inherits from the given klass
-    --- @param klass string | ClassDefinition | Class
+    --- @param klass string | common.Class.ClassDefinition | common.Class.Class
     --- @return boolean
     function cls:isClass(klass)
         local klassName = getClassNameFromTypesWithIt(klass)
@@ -179,10 +130,10 @@ local function MakeSimpleClassDefinition(className, base, ...)
 
     --- INITIALISATION
 
-    cls.init = init
+    cls.init = utils.init
 
     cls._new = function (...)
-        return new(cls, ...)
+        return utils.simpleNew(cls, ...)
     end
 
     cls.new = function (...)
@@ -205,8 +156,12 @@ local function MakeSimpleClassDefinition(className, base, ...)
 
         return rawget(cls, key)
     end
+    cls.__expect = utils.__expect
+
+    cls.__expectGetTypes = utils.__expectGetTypes
 
     cls.getBaseClassDefinition = getBaseClassDefinition
+
 
     return cls
 end

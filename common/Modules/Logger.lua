@@ -1,7 +1,7 @@
 --- Based off: https://gitlab.com/ralphgod3/cctutorials/-/blob/master/Modules/Logger.lua?ref_type=heads
 
 --- TODO:
---- Make a "global" in the returned table that is a class that changes global default values which are used when Logger.new() is ran with no params
+--- Make a "forceLevel" that is default nil, if set then it forces level to only be upto the forceLevel even if the tag's severity is higher
 --- Make a "singleton" that will cache its instance that modules may use.
 --- Make a way to "discard" certain levels (usually Fatal)
 --- Add a hook into "error" and log the stack trace before it errors out
@@ -12,31 +12,31 @@ local fs = _G.fs
 
 local TIME_FMT = "%F %T "
 
---- @class Logger.LoggerLevel
+--- @class _L_ogger.LoggerLevel
 --- @field prefix string The prefix for the log level.
 --- @field colour ccTweaked.colours.colour The color associated with the log level.
 --- @field severity integer The severity level.
 
 local DebugLevel = {
-    None = { prefix = "", colour = colours.black, severity = -1}, --- @type Logger.LoggerLevel
-    Temporary = {prefix = "[TMP]", colour = colours.purple, severity = 0}, --- @type Logger.LoggerLevel
-    Fatal = {prefix = "[FTL]", colour = colours.red, severity = 1}, --- @type Logger.LoggerLevel
-    Error = {prefix = "[ERR]", colour = colours.red, severity = 2}, --- @type Logger.LoggerLevel
-    Warning = {prefix = "[WRN]", colour = colours.yellow, severity = 3}, --- @type Logger.LoggerLevel
-    Info = {prefix = "[INF]", colour = colours.green, severity = 4}, --- @type Logger.LoggerLevel
-    Debug = {prefix = "[DBG]", colour = colours.blue, severity = 5}, --- @type Logger.LoggerLevel
-    Verbose = {prefix = "[VRB]", colour = colours.cyan, severity = 6}, --- @type Logger.LoggerLevel
+    None = { prefix = "", colour = colours.black, severity = -1}, --- @type _L_ogger.LoggerLevel
+    Temporary = {prefix = "[TMP]", colour = colours.purple, severity = 0}, --- @type _L_ogger.LoggerLevel
+    Fatal = {prefix = "[FTL]", colour = colours.red, severity = 1}, --- @type _L_ogger.LoggerLevel
+    Error = {prefix = "[ERR]", colour = colours.red, severity = 2}, --- @type _L_ogger.LoggerLevel
+    Warning = {prefix = "[WRN]", colour = colours.yellow, severity = 3}, --- @type _L_ogger.LoggerLevel
+    Info = {prefix = "[INF]", colour = colours.green, severity = 4}, --- @type _L_ogger.LoggerLevel
+    Debug = {prefix = "[DBG]", colour = colours.blue, severity = 5}, --- @type _L_ogger.LoggerLevel
+    Verbose = {prefix = "[VRB]", colour = colours.cyan, severity = 6}, --- @type _L_ogger.LoggerLevel
 }
 
---- @class Logger.new.kwargs The form the table passed into "new" should be when creating a new logger instance
+--- @class _L_ogger.new.kwargs The form the table passed into "new" should be when creating a new logger instance
 --- @field path? string Path of the log file, defaults to "./log.txt"
---- @field globalLevel? Logger.LoggerLevel Level to default any tags to, default global level is verbose (AKA log all)
+--- @field globalLevel? _L_ogger.LoggerLevel Level to default any tags to, default global level is verbose (AKA log all)
 --- @field logsToKeep? integer Amount of logs to store before deleting the oldest
 --- @field outputTerminal? ccTweaked.term.Redirect Terminal to print to. Default just won't print
 
 --- Creates an instance of the logger
---- @param kwargs? Logger.new.kwargs Table with key-value pairs defined by the type
---- @return Logger LoggerInstance A new logger instance
+--- @param kwargs? _L_ogger.new.kwargs Table with key-value pairs defined by the type
+--- @return common.Logger LoggerInstance A new logger instance
 local function new(kwargs)
     kwargs = kwargs or {} -- nil check
     local path = kwargs.path or "/log.txt"
@@ -45,33 +45,33 @@ local function new(kwargs)
     local outputTerminal = kwargs.outputTerminal
     local flattenPrintOut = false
 
-    --- @class Logger.Log
-    --- @field level Logger.LoggerLevel
+    --- @class _L_ogger.Log
+    --- @field level _L_ogger.LoggerLevel
     --- @field doc ccTweaked.cc.pretty.Doc
 
-    --- @type Logger.Log[]
+    --- @type _L_ogger.Log[]
     Logs = {}
 
 
-    --- @class Logger
+    --- @class common.Logger
     local this = {}
 
-    --- @type table<string, Logger.LoggerLevel>
+    --- @type table<string, _L_ogger.LoggerLevel>
     this.Tags = {}
 
     this.Levels = DebugLevel
 
     --- Sets path to log file
     --- @param _path filePath
-    --- @return Logger self For chaining
+    --- @return common.Logger self For chaining
     function this.setPath(_path)
         path = _path
         return this
     end
 
     --- Sets Global Level
-    --- @param level Logger.LoggerLevel
-    --- @return Logger  self For chaining
+    --- @param level _L_ogger.LoggerLevel
+    --- @return common.Logger  self For chaining
     function this.setGlobalLevel(level)
         globalLevel = level
         return this
@@ -79,7 +79,7 @@ local function new(kwargs)
 
     --- Sets the amount of logs to keep
     --- @param _logsToKeep integer
-    --- @return Logger  self For chaining
+    --- @return common.Logger  self For chaining
     function this.setLogsToKeep(_logsToKeep)
         logsToKeep = _logsToKeep
         return this
@@ -87,7 +87,7 @@ local function new(kwargs)
 
     --- Sets the output terminal
     --- @param terminal? ccTweaked.term.Redirect
-    --- @return Logger self For chaining
+    --- @return common.Logger self For chaining
     function this.setOutputTerminal(terminal)
         outputTerminal = terminal
         return this
@@ -101,15 +101,15 @@ local function new(kwargs)
 
     --- Sets the tag to the passed in leve
     --- @param tag string to change level
-    --- @param level Logger.LoggerLevel Level to change to
-    --- @return Logger self For chaining
+    --- @param level _L_ogger.LoggerLevel Level to change to
+    --- @return common.Logger self For chaining
     function this.setTagLevel(tag, level)
         this.Tags[tag] = level
         return this
     end
 
     --- @param bool boolean Whether to flatten out when logging out to terminal
-    --- @return Logger self For chaining
+    --- @return common.Logger self For chaining
     function this.setFlattenPrintOut(bool)
         flattenPrintOut = bool
         return this
@@ -148,7 +148,7 @@ local function new(kwargs)
 
     --- Builds the starting section of the print statemnt
     --- @param tag string
-    --- @param level Logger.LoggerLevel
+    --- @param level _L_ogger.LoggerLevel
     --- @return ccTweaked.cc.pretty.Doc prefixDoc
     local function buildLogPrefix(tag, level)
         local stamp = os.date(TIME_FMT)
@@ -157,7 +157,7 @@ local function new(kwargs)
 
     --- Logs at the given level according to the given tag
     --- @param tag string The tag which we are logging to
-    --- @param level Logger.LoggerLevel The level to log at
+    --- @param level _L_ogger.LoggerLevel The level to log at
     --- @param ... any Anything you wish to log
     local function log(tag, level, ...)
         if not this.Tags[tag] then this.setTagLevel(tag, globalLevel) end
@@ -172,7 +172,7 @@ local function new(kwargs)
                 p.print(flattenPrintOut and flattenedDoc or fullDoc)
             end
 
-            --- @type Logger.Log
+            --- @type _L_ogger.Log
             local Log = {
                 level = level,
                 doc = flattenedDoc

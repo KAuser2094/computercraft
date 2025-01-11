@@ -2,32 +2,32 @@ local cdm = require "common.Modules.Class.Simple"
 
 --- TODO: Make this follow the coding style I decided on
 
---- @class ITestModule : IClass
+--- @class common.ITestModule : common.Class.IClass
 --- @field testCount integer
---- @field run fun(self: TestModule): string[], string[] -- Runs tests in test module, returning passed and failed
+--- @field run fun(self: common.Test.TestModule): string[], string[] -- Runs tests in test module, returning passed and failed
 
---- @class TestModule : ITestModule, Class
+--- @class common.Test.TestModule : common.ITestModule, common.Class.Class
 --- @field tests table<string, fun(container: table)>
 --- @field TAG string
---- @field dbg Logger
---- @field testInit fun(self: TestModule, container: table) -- Initialise test container
+--- @field dbg common.Logger
+--- @field testInit fun(self: common.Test.TestModule, container: table) -- Initialise test container
 
---- @class TestModuleDefinition : SimpleClassDefinition
+--- @class common.TestModuleDefinition : common.Class.SimpleClassDefinition
 local Test = cdm("ModuleTest") -- This is meant to hold tests for a module/group of related functionality
 
---- @class TestModuleDefinition.new.kwargs
---- @field Logger Logger
+--- @class _T_est_M_odule_D_efinition.new.kwargs
+--- @field Logger common.Logger
 
 --- Returns a TestModule Instance
---- @param kwargs TestModuleDefinition.new.kwargs
---- @return ITestModule
+--- @param kwargs _T_est_M_odule_D_efinition.new.kwargs
+--- @return common.ITestModule
 function Test.new(kwargs)
-    --- @type ITestModule -- Just force it to accept it
+    --- @type common.ITestModule -- Just force it to accept it
     return Test._new(kwargs)
 end
 
---- @param this TestModule
---- @param kwargs TestModuleDefinition.new.kwargs
+--- @param this common.Test.TestModule
+--- @param kwargs _T_est_M_odule_D_efinition.new.kwargs
 function Test.init(this, kwargs)
     this.TAG = this:getClassName()
     this.dbg = kwargs.Logger
@@ -40,12 +40,12 @@ Test.tests = {}
 --- @type integer
 Test.testCount = 0
 
---- @class TestModule.container
+--- @class _T_est_M_odule.container
 --- @field TAG string
---- @field Logger Logger
+--- @field Logger common.Logger
 
 --- Runs the tests in the test module, returning amount passed and failed
---- @param this TestModule
+--- @param this common.Test.TestModule
 --- @return string[]? passed
 --- @return string[]? failed
 function Test.run(this)
@@ -69,7 +69,7 @@ function Test.run(this)
 end
 
 --- Is ran before every test, let's you initialise the container
---- @param this TestModule
+--- @param this common.Test.TestModule
 --- @param testContainer table
 function Test.testInit(this, testContainer) end
 

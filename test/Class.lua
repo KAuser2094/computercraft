@@ -10,7 +10,7 @@ local _SimpleClassName = "Test_SimpleClass"
 local _SimpleClassDef = assert(require("common.Modules.Class.Simple")(_SimpleClassName))
 local _SimpleClass = assert(_SimpleClassDef.new())
 
---- @class TestClassDefinition : TestModuleDefinition
+--- @class TestClassDefinition : common.TestModuleDefinition
 local TestClass = SimpleClass("Test_Class", TestModule)
 
 function TestClass.init(this, kwargs)
@@ -26,13 +26,13 @@ function TestClass.testInit(this, c)
     c.SimpleClass = _SimpleClass
 end
 
---- @class TestClass.container : TestModule.container
+--- @class TestClass.container : _T_est_M_odule.container
 --- @field ClassName string
---- @field ClassDef ClassDefinition
---- @field Class Class
+--- @field ClassDef common.Class.ClassDefinition
+--- @field Class common.Class.Class
 --- @field SimpleClassName string
---- @field SimpleClassDef SimpleClassDefinition
---- @field SimpleClass Class
+--- @field SimpleClassDef common.Class.SimpleClassDefinition
+--- @field SimpleClass common.Class.Class
 
 -- This is only here as the "Interface" Class does not exist for them -_-
 TestClass:addTest("Check has fields", function (container)
@@ -126,5 +126,7 @@ TestClass:addTest("Class functionality", function (container)
     Dbg.assertWithTag(TAG, container.Class:getPrivateTable()["key"] == "value", "Class:getPrivateTable()")
     Dbg.assertWithTag(TAG, container.SimpleClass:getPrivateTable()["key"] == "value", "SimpleClass:getPrivateTable()")
 end)
+
+-- TestClass:addTest("Purposeful Fail", function (container) container.Logger.assertWithTag(container.TAG, false, "THIS IS A PURPOSEFUL FAIL") end)
 
 return TestClass
