@@ -43,6 +43,7 @@ local function new(kwargs)
     local globalLevel = kwargs.globalLevel or DebugLevel.Verbose
     local logsToKeep = kwargs.logsToKeep or 300
     local outputTerminal = kwargs.outputTerminal
+    local flattenPrintOut = false
 
     --- @class Logger.Log
     --- @field level Logger.LoggerLevel
@@ -107,6 +108,13 @@ local function new(kwargs)
         return this
     end
 
+    --- @param bool boolean Whether to flatten out when logging out to terminal
+    --- @return Logger self For chaining
+    function this.setFlattenPrintOut(bool)
+        flattenPrintOut = bool
+        return this
+    end
+
     this.setTagLevel("", DebugLevel.Verbose) -- Anything logged with no tag should always print.
 
     --- Writes everything in "Logs" to the log file defined by path
@@ -160,7 +168,8 @@ local function new(kwargs)
             local fullDoc = p.concat(prefix, p.space, logDoc)
             local flattenedDoc = p.group(fullDoc)
             if outputTerminal then
-                p.print(flattenedDoc)
+                -- TODO: Add an option to print out flattened
+                p.print(flattenPrintOut and flattenedDoc or fullDoc)
             end
 
             --- @type Logger.Log
@@ -323,7 +332,9 @@ end
 
 return setmetatable(
 {
-    new = new
+    new = new,
+    -- require SHOULD be caching this, so this will only ever be a single instead
+    singleton = new().setOutputTerminal(nil).setGlobalLevel(DebugLevel.Verbose).setLogsToKeep(300).setPath("/log/program/" .. (arg and arg[0] .. ".txt" or "unkown_script_name.txt"))
 },
 {__call = function (_,...)
         new(...)

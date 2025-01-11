@@ -20,9 +20,9 @@ local Test = cdm("ModuleTest") -- This is meant to hold tests for a module/group
 
 --- Returns a TestModule Instance
 --- @param kwargs TestModuleDefinition.new.kwargs
---- @return TestModule
+--- @return ITestModule
 function Test.new(kwargs)
-    --- @type TestModule -- Just force it to accept it
+    --- @type ITestModule -- Just force it to accept it
     return Test._new(kwargs)
 end
 

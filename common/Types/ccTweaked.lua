@@ -262,3 +262,5 @@ function colours.rgb8(hex) end
 function colours.toBlit(colour) end
 
 --- END OF TAKEN FROM ADDON
+
+--- TOOD: Add certain modules that are defined in ccTweaked addon but not as classes and therefore...just don't work (like io)

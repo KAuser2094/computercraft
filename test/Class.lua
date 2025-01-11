@@ -117,9 +117,14 @@ TestClass:addTest("Class functionality", function (container)
     Dbg.assertWithTag(TAG, container.Class:getPrivateTable() and next(container.Class:getPrivateTable()) == nil, "Class:getPrivateTable()")
     Dbg.assertWithTag(TAG, container.SimpleClass:getPrivateTable() and next(container.SimpleClass:getPrivateTable()) == nil, "SimpleClass:getPrivateTable*()")
 
-    --- FIXME: TODO:
     Dbg.assertFunctionRunsWithTag(TAG, container.Class.setPrivate, { container.Class, "key", "value" }, "Class:setPrivate('key', 'value')")
-    Dbg.assertFunctionRunsWithTag(TAG, container.SimpleClass.setPrivate, { container.Class, "key", "value" }, "SimpleClass:setPrivate('key', 'value')")
+    Dbg.assertFunctionRunsWithTag(TAG, container.SimpleClass.setPrivate, { container.SimpleClass, "key", "value" }, "SimpleClass:setPrivate('key', 'value')")
+
+    Dbg.assertWithTag(TAG, container.Class:getPrivate("key") == "value", "Class:getPrivate(key)")
+    Dbg.assertWithTag(TAG, container.SimpleClass:getPrivate("key") == "value", "SimpleClass:getPrivate(key)")
+
+    Dbg.assertWithTag(TAG, container.Class:getPrivateTable()["key"] == "value", "Class:getPrivateTable()")
+    Dbg.assertWithTag(TAG, container.SimpleClass:getPrivateTable()["key"] == "value", "SimpleClass:getPrivateTable()")
 end)
 
 return TestClass
