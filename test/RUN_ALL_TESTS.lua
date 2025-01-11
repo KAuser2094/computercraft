@@ -7,7 +7,7 @@ Dbg = Dbg.setPath("log_all_tests.txt")
 local TestRunner = TestRunnerDef.new({ Logger = Dbg })
 TestRunner:setFailures():setShow(term.current())
 -- Add Modules
-TestRunner:addTestModule(require("test.IClass"))
+TestRunner:addTestModule(require("test.Class"))
 
 -- Run tests
 local _ = TestRunner:run()

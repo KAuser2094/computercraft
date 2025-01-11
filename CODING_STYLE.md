@@ -2,13 +2,39 @@
 
 This is here because for some reason I keep flip-flop-ing on my coding style, hopefully this will force me to stick to one (-_-). Also is semi-documentation.
 
+## Types
+
+Instructions on using and making types/type-classes (hereby just type) in LuaLS.
+
+### Classes
+
+Look at the `Classes.Types` section,
+
+## FileOnly/OnlyWithinOtherClass Types
+
+If a type is solely there to type (usually a table) within another class or to share fields between 2 new types in the same file then it should lead with `_<C>_<LASS>_<N>_<AME>.` , repeat for how many levels in you are (that are not also `FileOnly/OnlyWithinOtherClass` Types), and followed by its actual name. To try and avoid polluting the actual types. 
+
+The `_` after the first letter of each word is because the autocomplete pattern matches from anywhere i n the types name-string, by doing this, as long as you type a word you SHOULD be able to see your actual type. It also does not unreasonable increase the difficulty of using these wierdly formatted types as they change is consistnent and you just type in the formatted `<CLASSNAME>` and get all its subtypes.
+
 ## Classes
 
 There is a `Class` Module and type that for the most part will be used. However in some cases, like `Logger` closure type classes may be used, in general if the class is self isolated then it is fine to not use the `Class` Module
 
+### Types
+
+Each class will generally end up creating 3/4 types:
+- `I<CLASSNAME>Definition` -- This one is optional, ignore if you aren't using it, also `SimpleClassDefinition` simply does not support it
+- `<CLASSNAME>Definition` (inherits the above if it is being used)
+- `I<CLASSNAME>` which holds only the public facing side of an instance (and inherits from `IClass`)
+- `<CLASSNAME>` which holds the public and private sides of an instance (Also inherits from above) (and inherits from `Class`)
+
+If `I<CLASSNAME>Definition` is skipped define `I<CLASSNAME>` within the class implementation file itself, otherwise follow the `Interface` logic to create the `I<CLASSNAME`
+
+Within the implementation file (and implementations that inherit from it) you are likely to use `<CLASSNAME>`. When actually using an instance, use `I<CLASSNAME>` so you are only using methods that you are expected to use.
+
 ### Class Module
 
-When creating a `Class` you are technically creating a `ClassDefinition` and it is only after the call of "new" that you have a Class. `Class.Simple` is closer to conventional metatable-based classes for lua, while following the `IClass` type and including inheritance. `Class` is a custom extended class implementation that allows for many more features with the aim of extendable functionality. Always use `Class.Simple` where possible.
+When creating a `Class` you are technically creating a `ClassDefinition` and it is only after the call of "new" that you have a Class. `Class.Simple` is closer to conventional metatable-based classes for lua, while following the `Class` type and including inheritance. `Class` is a custom extended class implementation that allows for many more features with the aim of extendable functionality. Always use `Class.Simple` where possible.
 
 #### self vs this
 
@@ -44,7 +70,7 @@ Although as each class usually redefines `new` to cast the return type and chang
 
 #### new
 
-The new method should always be a call and return of `._new`, it is just here to cast the type to the actual Class instead of `IClass`.
+The new method should always be a call and return of `._new`, it is just here to cast the type to the actual Class instead of `Class`.
 
 #### init
 

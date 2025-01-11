@@ -1,36 +1,42 @@
 --- @diagnostic disable: undefined-field
---- Tests the implentation of the basic IClass from SimpleClass and Class.
+--- Tests the implentation of the basic Class from SimpleClass and Class.
 local SimpleClass = assert(require "common.Modules.Class.Simple")
 local TestModule = assert(require "common.Modules.Test.Test")
-local cdf = assert(require("common.Modules.Class")("Test_Class"))
 
-local scdf = assert(require("common.Modules.Class.Simple")("Test_SimpleClass"))
-local cdi = assert(cdf.new())
-local scdi = assert(scdf.new())
+local _ClassName = "Test_Class"
+local _ClassDef = assert(require("common.Modules.Class")(_ClassName))
+local _Class = assert(_ClassDef.new())
+local _SimpleClassName = "Test_SimpleClass"
+local _SimpleClassDef = assert(require("common.Modules.Class.Simple")(_SimpleClassName))
+local _SimpleClass = assert(_SimpleClassDef.new())
 
---- @class TestIClassDefinition : TestModuleDefinition
-local TestIClass = SimpleClass("Test_IClass", TestModule)
+--- @class TestClassDefinition : TestModuleDefinition
+local TestClass = SimpleClass("Test_Class", TestModule)
 
-function TestIClass.init(this, kwargs)
+function TestClass.init(this, kwargs)
     TestModule.init(this, kwargs)
 end
 
-function TestIClass.testInit(this, c)
-    c.ClassDef = cdf
-    c.Class = cdi
-    c.SimpleClassDef = scdf
-    c.SimpleClass = scdi
+function TestClass.testInit(this, c)
+    c.ClassName = _ClassName
+    c.ClassDef = _ClassDef
+    c.Class = _Class
+    c.SimpleClassName = _SimpleClassName
+    c.SimpleClassDef = _SimpleClassDef
+    c.SimpleClass = _SimpleClass
 end
 
---- @class TestIClass.container : TestModule.container
---- @field ClassDef IClassDefinition
---- @field Class IClass
---- @field SimpleClassDef ISimpleClassDefinition
---- @field SimpleClass IClass
+--- @class TestClass.container : TestModule.container
+--- @field ClassName string
+--- @field ClassDef ClassDefinition
+--- @field Class Class
+--- @field SimpleClassName string
+--- @field SimpleClassDef SimpleClassDefinition
+--- @field SimpleClass Class
 
 -- This is only here as the "Interface" Class does not exist for them -_-
-TestIClass:addTest("Check has fields", function (container)
-    --- @cast container TestIClass.container
+TestClass:addTest("Check has fields", function (container)
+    --- @cast container TestClass.container
 
     local TAG = container.TAG
     local Dbg = container.Logger
@@ -88,4 +94,32 @@ TestIClass:addTest("Check has fields", function (container)
     end
 end)
 
-return TestIClass
+TestClass:addTest("Class functionality", function (container)
+    --- @cast container TestClass.container
+    local TAG = container.TAG
+    local Dbg = container.Logger
+
+    Dbg.assertWithTag(TAG, container.ClassName == container.Class:getClassName(), "Class:getClassName()")
+    Dbg.assertWithTag(TAG, container.SimpleClassName == container.SimpleClass:getClassName(), "SimpleClass:getClassName()")
+
+    Dbg.assertWithTag(TAG, container.ClassName == container.Class:getAllClassNames()[1], "Class:getAllClassNames()")
+    Dbg.assertWithTag(TAG, container.SimpleClassName == container.SimpleClass:getAllClassNames()[1], "SimpleClass:getAllClassNames()")
+
+    Dbg.assertWithTag(TAG, next(container.Class.inherits) == container.Class:getClassName(), "Class.inherits")
+    Dbg.assertWithTag(TAG, next(container.SimpleClass.inherits) == container.SimpleClass:getClassName(), "SimpleClass.inherits")
+
+    Dbg.assertWithTag(TAG, not container.Class:inheritsClass(container.Class), "not Class:inheritsClass(Class)")
+    Dbg.assertWithTag(TAG, not container.SimpleClass:inheritsClass(container.SimpleClass), "not SimpleClass:inheritsClass(SimpleClass)")
+
+    Dbg.assertWithTag(TAG, container.Class:isExactClass(container.Class), "Class:isExactClass(Class)")
+    Dbg.assertWithTag(TAG, container.SimpleClass:isExactClass(container.SimpleClass), "SimpleClass:isExactClass(SimpleClass)")
+
+    Dbg.assertWithTag(TAG, container.Class:getPrivateTable() and next(container.Class:getPrivateTable()) == nil, "Class:getPrivateTable()")
+    Dbg.assertWithTag(TAG, container.SimpleClass:getPrivateTable() and next(container.SimpleClass:getPrivateTable()) == nil, "SimpleClass:getPrivateTable*()")
+
+    --- FIXME: TODO:
+    Dbg.assertFunctionRunsWithTag(TAG, container.Class.setPrivate, { container.Class, "key", "value" }, "Class:setPrivate('key', 'value')")
+    Dbg.assertFunctionRunsWithTag(TAG, container.SimpleClass.setPrivate, { container.Class, "key", "value" }, "SimpleClass:setPrivate('key', 'value')")
+end)
+
+return TestClass

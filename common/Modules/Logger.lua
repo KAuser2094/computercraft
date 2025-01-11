@@ -289,6 +289,35 @@ local function new(kwargs)
         end
     end
 
+    --- Some as `Logger.assert` but will run `fn(table.unpack(args))` and `v` is whether it does not errror.
+    --- Similarly, instead of returning v it will returns all return values of the function at the front.
+    --- @param fn any
+    --- @param args any
+    --- @param message any
+    --- @param ... any
+    function this.assertFunctionRuns(fn, args, message, ...)
+        return this.assertFunctionRunsWithTag("", fn, args, message, ...)
+    end
+
+    function this.assertFunctionRunsWithTag(tag, fn, args, message, ...)
+        -- Not actually using assert here for the success case, so if someone was expecting to hook assert then RIP
+        local protected = { pcall(fn, table.unpack(args)) }
+
+        if protected[1] then -- Did not error
+            table.remove(protected, 1)
+            return table.unpack(protected), message, ...
+        else
+            local pretty_args = {} -- Note: Will end up with a space line in front
+            for _, arg in pairs(args) do
+                table.insert(pretty_args, p.space_line)
+                table.insert(pretty_args, p.pretty(arg))
+            end
+            local fn_args_msg = p.render(p.concat(p.pretty(fn), p.space, "ran on", table.unpack(pretty_args)))
+
+            return this.assertWithTag(tag, false and fn_args_msg, message .. "\t[ERROR]: " .. protected[2])
+        end
+    end
+
     return this
 end
 

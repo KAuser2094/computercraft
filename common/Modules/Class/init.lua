@@ -6,7 +6,7 @@ Dbg = Dbg.setOutputTerminal(term.current()).setTagLevel(TAG, Dbg.Levels.Warning)
 --- Is used to define a class
 
 --- Gets the string className from the valid types
---- @param klass string | IClassDefinition | IClass
+--- @param klass string | ClassDefinition | Class
 --- @return string | nil  klassName Returns nil if not a valid type
 local function getClassNameFromTypesWithIt(klass)
     Dbg.logV(TAG, "Getting ClassName from:",klass)
@@ -60,8 +60,8 @@ local private = setmetatable({}, {__mode = 'k'}) -- Holds the private fields of 
 ]]
 
 --- Default inheritance into another definition
---- @param self IClassDefinition
---- @param klass IClassDefinition
+--- @param self ClassDefinition
+--- @param klass ClassDefinition
 local function _basicInheritInto(self, klass)
     deepMerge(klass.__inheritanceSettings, self.__inheritanceSettings)
     deepMerge(klass.__instanceSettings, self.__instanceSettings)
@@ -91,21 +91,21 @@ local function _basicInheritInto(self, klass)
 end
 
 --- Runs after self inherits INTO (is inherited by) a klass
---- @param self IClassDefinition
---- @param klass IClassDefinition
+--- @param self ClassDefinition
+--- @param klass ClassDefinition
 local function postInherited(self, klass) end
 
  --- inherits this into the given class definition as a base class
---- @param self IClassDefinition
- --- @param klass IClassDefinition
+--- @param self ClassDefinition
+ --- @param klass ClassDefinition
 local function inheritInto(self, klass)
     _basicInheritInto(self, klass)
 end
 
 --- Inherits from the given classes, goes from last given to first.
---- @param self IClassDefinition
---- @param klass IClassDefinition Base class to inherit from
---- @param ... IClassDefinition ...
+--- @param self ClassDefinition
+--- @param klass ClassDefinition Base class to inherit from
+--- @param ... ClassDefinition ...
 local function inheritFrom(self, klass, ...)
     local klasses = { ... }
     for i=#klasses, 1, -1 do
@@ -116,7 +116,7 @@ local function inheritFrom(self, klass, ...)
 end
 
 --- Makes it so the key will not be inherited
---- @param self IClassDefinition
+--- @param self ClassDefinition
 --- @param key any
 local function doNotInherit(self, key)
     if not self[key] then
@@ -126,7 +126,7 @@ local function doNotInherit(self, key)
 end
 
 --- Makes it so the key will merged up (used for tables)
---- @param self IClassDefinition
+--- @param self ClassDefinition
 --- @param key any
 local function mergeOnInherit(self, key)
     if not self[key] then
@@ -137,7 +137,7 @@ local function mergeOnInherit(self, key)
 end
 
 --- Makes it so the key will deep-merged up (used for tables)
---- @param self IClassDefinition
+--- @param self ClassDefinition
 --- @param key any
 local function deepMergeOnInherit(self, key)
     if not self[key] then
@@ -152,14 +152,14 @@ end
 ]]
 
 --- Called when creating an instance
---- @param self IClass
+--- @param self Class
 --- @param ... any The parameters
 local function init(self, ...) end
 
 --- Creates an instance given a definition
---- @param definition IClassDefinition
+--- @param definition ClassDefinition
 --- @param ... any The parameters to pass into the `init` function
---- @return IClass instance
+--- @return Class instance
 local function new(definition, ...)
     local this = {}
 
@@ -187,22 +187,22 @@ local function new(definition, ...)
 end
 
 --- Is ran after the initialisation of a class for the given definition
---- @param self IClassDefinition
---- @param instance IClass
+--- @param self ClassDefinition
+--- @param instance Class
 local function postInit(self, instance) end
 
 --- Is ran after ALL initialisation, extra checks on wellformedness
---- @param self IClassDefinition
---- @param instance IClass
+--- @param self ClassDefinition
+--- @param instance Class
 local function _checkWellFormed(self, instance) --[[Implemented in Interface class.]] end
 
 --- Is ran after ALL initialisation, extra checks on wellformedness, extra wellformedness checks that can be defined
---- @param self IClassDefinition
---- @param instance IClass
+--- @param self ClassDefinition
+--- @param instance Class
 local function checkWellFormed(self, instance) --[[Implemented in Interface class.]] end
 
 --- Makes a the key-value at key public so the user can see the fields in the class
---- @param self IClassDefinition
+--- @param self ClassDefinition
 --- @param key string
 local function markPublic(self, key)
     if not self[key] then
@@ -212,7 +212,7 @@ local function markPublic(self, key)
 end
 
 --- Makes a the key-value at key public so the user can see the fields in the class
---- @param self IClassDefinition
+--- @param self ClassDefinition
 --- @param key string
 local function markDefinitionOnly(self, key)
     if not self[key] then
@@ -227,8 +227,8 @@ end
 
 -- INDEX
 
---- @param cls IClassDefinition
---- @param this IClass
+--- @param cls ClassDefinition
+--- @param this Class
 --- @param key any
 --- @return any value
 local function _preIndex(cls, this, key)
@@ -239,14 +239,14 @@ local function _preIndex(cls, this, key)
     end
 end
 
---- @param cls IClassDefinition
---- @param this IClass
+--- @param cls ClassDefinition
+--- @param this Class
 --- @param key any
 --- @return any value
 local function preIndex(cls, this, key) end
 
---- @param cls IClassDefinition
---- @param this IClass
+--- @param cls ClassDefinition
+--- @param this Class
 --- @param key any
 --- @param retValue any
 local function _postIndex(cls, this, key, retValue)
@@ -256,22 +256,22 @@ local function _postIndex(cls, this, key, retValue)
     return retValue
 end
 
---- @param cls IClassDefinition
---- @param this IClass
+--- @param cls ClassDefinition
+--- @param this Class
 --- @param key any
 --- @param retValue any
 local function postIndex(cls, this, key, retValue) return retValue end
 
 -- NEW INDEX
 
---- @param cls IClassDefinition
---- @param this IClass
+--- @param cls ClassDefinition
+--- @param this Class
 --- @param key any
 --- @param value any
 local function _preNewIndex(cls, this, key, value) end
 
---- @param cls IClassDefinition
---- @param this IClass
+--- @param cls ClassDefinition
+--- @param this Class
 --- @param key any
 --- @param value any
 local function preNewIndex(cls, this, key, value) end
@@ -284,7 +284,7 @@ local function preNewIndex(cls, this, key, value) end
 
 --- Creates A ClassDefinition Object
 --- @param className string The class name (try to make this unique within the program)
---- @return IClassDefinition BaseDefinition The Base ClassDefinition Object you can add onto.
+--- @return ClassDefinition BaseDefinition The Base ClassDefinition Object you can add onto.
 local function MakeClassDefinition(className)
     Dbg.logI(TAG, "Creating ClassDef with name: " .. className)
     local cls = {}
@@ -292,7 +292,7 @@ local function MakeClassDefinition(className)
         INHERITANCE (We do this first so we can set the values for later definition)
     ]]
     -- This is quite long...do not feel like seperating it though.
-    --- @type IClassDefinition._private.__inheritanceSettings
+    --- @type _C_lass_D_efinition._private.__inheritanceSettings
     cls.__inheritanceSettings = {
         doNotCopy = {
             className = true,
@@ -311,7 +311,7 @@ local function MakeClassDefinition(className)
         },
     }
 
-    --- @class IClassDefinition._private.__instanceSettings
+    --- @class _C_lass_D_efinition._private.__instanceSettings
     cls.__instanceSettings = {
         -- Only add functions that solely are called when defining/on definitions, not "private" methods.
         definitionOnly = { -- This check is implemented in the __index method.
@@ -341,7 +341,7 @@ local function MakeClassDefinition(className)
         }
     }
 
-    --- @class IClassDefinition._private.__otherSettings
+    --- @class _C_lass_D_efinition._private.__otherSettings
     cls.__otherSettings = {
         protectEffectiveKeys = true,
     }
@@ -390,20 +390,20 @@ local function MakeClassDefinition(className)
     ]]
     cls.className = className
 
-    --- @type IClass._private.inherits
+    --- @type _C_lass._private.inherits
     cls.inherits = { [cls.className] = cls } -- You technically inherit yourself
 
     --- PRIVATE
 
     --- Gets the private table for the instance
-    --- @param self IClass
+    --- @param self Class
     --- @return table
     function cls.getPrivateTable(self)
         return private[self] -- If we are holding a reference to the table, then the key still exists
     end
 
     --- Gets the private table for the instance
-    --- @param self IClass
+    --- @param self Class
     --- @param key any Gets the private instance value at the key (This is already added to __index so you likely do not need to use this)
     function cls.getPrivate(self, key)
         if not self.isAClass then return end
@@ -411,7 +411,7 @@ local function MakeClassDefinition(className)
     end
 
     --- Completely replaces the private instance table (Sometimes it is easier to get the whole table, do work, and set it back)
-    --- @param self IClass
+    --- @param self Class
     --- @param tbl table
     function cls.setPrivateTable(self, tbl)
         if not self.isAClass then return end
@@ -419,7 +419,7 @@ local function MakeClassDefinition(className)
     end
 
     --- Sets a private instance key-value pair (user won't be able to see it in the instance table)
-    --- @param self IClass
+    --- @param self Class
     --- @param key any
     --- @param value any
     function cls.setPrivate(self, key, value)
@@ -487,7 +487,7 @@ local function MakeClassDefinition(className)
     cls:markPublic("getAllClassNames")
 
     --- Checks if thhe class inherits the given klass
-    --- @param klass string | IClassDefinition | IClass
+    --- @param klass string | ClassDefinition | Class
     --- @return boolean
     function cls:inheritsClass(klass)
         local klassName = getClassNameFromTypesWithIt(klass)
@@ -502,7 +502,7 @@ local function MakeClassDefinition(className)
     cls:markPublic("inheritsClass")
 
     --- Checks if thhe class is an exact instance of the given klass
-    --- @param klass string | IClassDefinition | IClass
+    --- @param klass string | ClassDefinition | Class
     --- @return boolean
     function cls:isExactClass(klass)
         local klassName = getClassNameFromTypesWithIt(klass)
@@ -514,7 +514,7 @@ local function MakeClassDefinition(className)
     cls:markPublic("isExactClass")
 
     --- Checks if thhe class is exactly or inherits from the given klass
-    --- @param klass string | IClassDefinition | IClass
+    --- @param klass string | ClassDefinition | Class
     --- @return boolean
     function cls:isClass(klass)
         local klassName = getClassNameFromTypesWithIt(klass)

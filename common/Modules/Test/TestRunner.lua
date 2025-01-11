@@ -1,6 +1,9 @@
+local p = require "cc.pretty"
 local cdm = require "common.Modules.Class.Simple"
 
 local TAG = "TEST_RUNNER"
+
+--- TODO: Make this follow the coding style I decided on
 
 --- @class TestRunner.results.item
 --- @field passed string[]
@@ -8,22 +11,25 @@ local TAG = "TEST_RUNNER"
 
 --- @alias TestRunner.results TestRunner.results.item[]
 
---- @class TestRunner : IClass
+--- @class ITestRunner: IClass
+--- @field addTestModule fun(self: TestRunner, testModule: TestModuleDefinition) -- Adds a module to the runner using a definition
+--- @field run fun(self: ITestRunner): TestRunner.results -- Runs the test modules added to the runner, will also return the results field
+--- @field setVerbose fun(self: ITestRunner): ITestRunner -- Will log anything
+--- @field setFailures fun(self: ITestRunner): ITestRunner -- Will only log the failures
+--- @field setSilent fun(self: ITestRunner): ITestRunner -- Will not log to terminal, only file
+--- @field setShow fun(self: ITestRunner, terminal?: ccTweaked.term.Redirect): ITestRunner -- Will also log to terminal, uses the passed in terminal if given
+--- @field setCompletelySilent fun(self: TestRunner): ITestRunner -- Will not even print out the results
+
+--- @class TestRunner : ITestRunner, Class
 --- @field modules TestModule[]
 --- @field totalTests integer
 --- @field results TestRunner.results
 --- @field dbg Logger
---- @field addTestModule fun(self: TestRunner, testModule: TestModuleDefinition) -- Adds a module to the runner using a definition
---- @field run fun(self: TestRunner): TestRunner.results -- Runs the test modules added to the runner, will also return the results field
+--- @field formatResults fun(self: TestRunner, totalPassed: integer, totalFailed: integer): ccTweaked.cc.pretty.Doc -- Formats the results to a pretty Doc
 --- @field oldTerm? ccTweaked.term.Redirect
 --- @field completeSilent? boolean
---- @field setVerbose fun(self: TestRunner): TestRunner -- Will log anything
---- @field setFailures fun(self: TestRunner): TestRunner -- Will only log the failures
---- @field setSilent fun(self: TestRunner): TestRunner -- Will not log to terminal, only file
---- @field setShow fun(self: TestRunner, terminal?: ccTweaked.term.Redirect): TestRunner -- Will also log to terminal, uses the passed in terminal if given
---- @field setCompletelySilent fun(self: TestRunner): TestRunner -- Will not even print out the results
 
---- @class TestRunnerDefinition : ISimpleClassDefinition
+--- @class TestRunnerDefinition : SimpleClassDefinition
 local TestRunner = cdm("TestRunner")
 
 --- @class TestRunnerDefinition.new.kwargs
@@ -108,6 +114,32 @@ function TestRunner.setCompleteSilence(this)
 end
 
 --- @param this TestRunner
+--- @param totalPassed integer
+--- @param totalFailed integer
+--- @return ccTweaked.cc.pretty.Doc
+function TestRunner.formatResults(this, totalPassed, totalFailed)
+    local mt = { insert = function (self, ...) for _,v in pairs({...}) do table.insert(self, v) end end } ; mt.__index = mt -- Small Class to not have to spam table.insert
+    local p_result = setmetatable({}, mt) -- Array containing the strings/Docs to concat
+    p_result:insert("Passed:", p.space, p.pretty(totalPassed), "/", p.pretty(this.totalTests), p.space_line)
+    p_result:insert("Failed:", p.space, p.pretty(totalFailed), "/", p.pretty(this.totalTests), p.space_line)
+    p_result:insert(p.space_line, "------------------ ", p.space_line)
+    for modName, result in pairs(this.results) do
+        p_result:insert(modName, ":", p.space_line)
+        -- TODO: Maybe add passed to results (probably with an option)
+
+        if this.results[modName].failed then
+            p_result:insert(p.space, p.space, "(FAILED):", p.space_line)
+            for _, testName in ipairs(this.results[modName].failed) do
+                p_result:insert(p.space, p.space, p.space, p.space, testName, p.space_line)
+            end
+        end
+    end
+
+    p_result = p.concat(table.unpack(p_result))
+    return p_result
+end
+
+--- @param this TestRunner
 --- @return TestRunner.results results
 function TestRunner.run(this)
     this.dbg.logI(TAG, "Starting Tests")
@@ -129,12 +161,8 @@ function TestRunner.run(this)
         end
     end
     -- TODO: Display total results better
-    print("Passed:", totalPassed, "/", this.totalTests)
-    print("Failed:", totalFailed, "/", this.totalTests)
-
+    p.print(this:formatResults(totalPassed, totalFailed))
     return this.results
 end
 
 return TestRunner
---- TODO:
---- Better format the results printed out

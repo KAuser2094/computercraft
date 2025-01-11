@@ -1,14 +1,18 @@
 local cdm = require "common.Modules.Class.Simple"
 
---- @class TestModule : IClass
---- @field tests table<string, fun(container: table)>
+--- TODO: Make this follow the coding style I decided on
+
+--- @class ITestModule : IClass
 --- @field testCount integer
+--- @field run fun(self: TestModule): string[], string[] -- Runs tests in test module, returning passed and failed
+
+--- @class TestModule : ITestModule, Class
+--- @field tests table<string, fun(container: table)>
 --- @field TAG string
 --- @field dbg Logger
 --- @field testInit fun(self: TestModule, container: table) -- Initialise test container
---- @field run fun(self: TestModule): string[], string[] -- Runs tests in test module, returning passed and failed
 
---- @class TestModuleDefinition : ISimpleClassDefinition
+--- @class TestModuleDefinition : SimpleClassDefinition
 local Test = cdm("ModuleTest") -- This is meant to hold tests for a module/group of related functionality
 
 --- @class TestModuleDefinition.new.kwargs

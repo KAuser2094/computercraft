@@ -1,4 +1,4 @@
--- A HEAVILY stripped down ClassDefinition that provides enough that it can still provide a @type IClass
+-- A HEAVILY stripped down ClassDefinition that provides enough that it can still provide a @type Class
 -- "Simple" compared to normal Class, obviously this is still quite complicated compared to other class implementations
 
 local Dbg = require "common.Modules.Logger"
@@ -7,7 +7,7 @@ Dbg = Dbg.new()
 Dbg = Dbg.setOutputTerminal(term.current()).setTagLevel(TAG, Dbg.Levels.Warning)
 
 --- Gets the string className from the valid types
---- @param klass string | IClassDefinition | IClass
+--- @param klass string | ClassDefinition | Class
 --- @return string | nil  klassName Returns nil if not a valid type
 local function getClassNameFromTypesWithIt(klass)
     Dbg.logV(TAG, "Getting ClassName from:",klass)
@@ -31,14 +31,14 @@ local doNotInherit = {
 }
 
 --- Called when creating an instance
---- @param self IClass
+--- @param self Class
 --- @param ... any The parameters
 local function init(self, ...) end
 
 --- Creates an instance given a definition
---- @param definition ISimpleClassDefinition
+--- @param definition SimpleClassDefinition
 --- @param ... any The parameters to pass into the `init` function
---- @return IClass instance
+--- @return Class instance
 local function new(definition, ...)
     local this = {}
 
@@ -57,11 +57,11 @@ end
 
 --- Returns a simplified class definition
 --- @param className string
---- @param base? ISimpleClassDefinition
---- @param ... ISimpleClassDefinition
---- @return ISimpleClassDefinition
+--- @param base? SimpleClassDefinition
+--- @param ... SimpleClassDefinition
+--- @return SimpleClassDefinition
 local function MakeSimpleClassDefinition(className, base, ...)
-    --- @type (ISimpleClassDefinition?)[] -- NOTE: THIS COULD END UP BEING SPARSE
+    --- @type (SimpleClassDefinition?)[] -- NOTE: THIS COULD END UP BEING SPARSE
     local bases = { base, ... }
     Dbg.logI(TAG, "Creating ClassDef with name: " .. className)
     local cls = {}
@@ -85,14 +85,14 @@ local function MakeSimpleClassDefinition(className, base, ...)
     --- PRIVATE
 
     --- Gets the private table for the instance
-    --- @param self IClass
+    --- @param self Class
     --- @return table
     function cls:getPrivateTable()
         return private[self] -- If we are holding a reference to the table, then the key still exists
     end
 
     --- Gets the private table for the instance
-    --- @param self IClass
+    --- @param self Class
     --- @param key any Gets the private instance value at the key (This is already added to __index so you likely do not need to use this)
     function cls:getPrivate(key)
         if not self.isAClass then return end
@@ -100,7 +100,7 @@ local function MakeSimpleClassDefinition(className, base, ...)
     end
 
     --- Completely replaces the private instance table (Sometimes it is easier to get the whole table, do work, and set it back)
-    --- @param self IClass
+    --- @param self Class
     --- @param tbl table
     function cls:setPrivateTable(tbl)
         if not self.isAClass then return end
@@ -108,7 +108,7 @@ local function MakeSimpleClassDefinition(className, base, ...)
     end
 
     --- Sets a private instance key-value pair (user won't be able to see it in the instance table)
-    --- @param self IClass
+    --- @param self Class
     --- @param key any
     --- @param value any
     function cls:setPrivate(key, value)
@@ -131,7 +131,7 @@ local function MakeSimpleClassDefinition(className, base, ...)
     end
 
     --- Checks if thhe class inherits the given klass
-    --- @param klass string | IClassDefinition | IClass
+    --- @param klass string | ClassDefinition | Class
     --- @return boolean
     function cls:inheritsClass(klass)
         local klassName = getClassNameFromTypesWithIt(klass)
@@ -144,7 +144,7 @@ local function MakeSimpleClassDefinition(className, base, ...)
     end
 
     --- Checks if thhe class is an exact instance of the given klass
-    --- @param klass string | IClassDefinition | IClass
+    --- @param klass string | ClassDefinition | Class
     --- @return boolean
     function cls:isExactClass(klass)
         local klassName = getClassNameFromTypesWithIt(klass)
@@ -154,7 +154,7 @@ local function MakeSimpleClassDefinition(className, base, ...)
     end
 
     --- Checks if thhe class is exactly or inherits from the given klass
-    --- @param klass string | IClassDefinition | IClass
+    --- @param klass string | ClassDefinition | Class
     --- @return boolean
     function cls:isClass(klass)
         local klassName = getClassNameFromTypesWithIt(klass)
