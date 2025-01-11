@@ -3,8 +3,19 @@
 
 local Dbg = require "common.Modules.Logger"
 local TAG = "SIMPLE_CLASS_DEF"
-Dbg = Dbg.new()
-Dbg = Dbg.setOutputTerminal(term.current()).setTagLevel(TAG, Dbg.Levels.Warning)
+Dbg = Dbg.singleton
+Dbg = Dbg.setTagLevel(TAG, Dbg.Levels.Warning)
+
+local private = setmetatable({}, {__mode = 'k'})
+
+--- @type SimpleClassDefinition
+local BASE_CLASS_DEFINITION
+
+--- Returns an empty Class Definition (just in case you need to overwrite it)
+--- @return SimpleClassDefinition
+local function getBaseClassDefinition()
+    return BASE_CLASS_DEFINITION
+end
 
 --- Gets the string className from the valid types
 --- @param klass string | ClassDefinition | Class
@@ -17,13 +28,12 @@ local function getClassNameFromTypesWithIt(klass)
     Dbg.logE(TAG, "SOMEHOW GOT NIL GIVE KLASS, klass, type, isAClass/Definition", klass, type(klass), klass.isAClassDefinition or klass.isAClass)
 end
 
-local private = setmetatable({}, {__mode = 'k'})
-
 local classDefOnly = {
     isAClassDefinition = true,
     init = true,
     _new = true,
     new = true,
+    getBaseClassDefinition = true,
 }
 
 local doNotInherit = {
@@ -196,7 +206,11 @@ local function MakeSimpleClassDefinition(className, base, ...)
         return rawget(cls, key)
     end
 
+    cls.getBaseClassDefinition = getBaseClassDefinition
+
     return cls
 end
+
+BASE_CLASS_DEFINITION = MakeSimpleClassDefinition(" ") -- "" is used for the normal Class, so " " it is
 
 return MakeSimpleClassDefinition

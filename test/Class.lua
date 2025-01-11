@@ -56,7 +56,7 @@ TestClass:addTest("Check has fields", function (container)
     }
 
     local SimpleClassDefOnlyFields = { --  Due to how SimpleClass works, its private fields are just the definition only fields (as we strip out everything else)
-        "init", "_new", "new"
+        "init", "_new", "new", "getBaseClassDefinition"
     }
 
     local ClassDefFields = { -- For fields that Class will technically also have
@@ -65,7 +65,7 @@ TestClass:addTest("Check has fields", function (container)
     }
 
     local ClassDefOnlyFields = {
-        "init", "_new", "new",
+        "init", "_new", "new", "getBaseClassDefinition",
         "__inheritanceSettings",
         "inheritInto", "inheritFrom", "doNotInherit", "mergeOnInherit", "deepMergeOnInherit", "postInherited", "postInit", "_checkWellFormed", "checkWellFormed",
         "markPublic", "markDefinitionOnly",

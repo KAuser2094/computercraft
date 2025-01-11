@@ -80,9 +80,11 @@ local ClassDefinition__private = {}
     Actual Classes
 ]]
 --- @class ClassDefinition : _C_lass_D_efinition._private, _C_lass._public, _C_lass._private
+--- @field getBaseClassDefinition fun(): ClassDefinition -- Gets an unchanged base definition
 local ClassDefinition = {}
 
 --- @class SimpleClassDefinition : _S_imple_C_lass_D_efinition._private, _C_lass._public, _C_lass._private
+--- @field getBaseClassDefinition fun(): SimpleClassDefinition -- Gets an unchanged base simple definition
 local SimpleClassDefinition = {}
 
 --- @class IClass : _C_lass._public

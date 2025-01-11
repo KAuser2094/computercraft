@@ -1,9 +1,22 @@
 local Dbg = require "common.Modules.Logger"
 local TAG = "CLASS_DEF"
-Dbg = Dbg.new()
-Dbg = Dbg.setOutputTerminal(term.current()).setTagLevel(TAG, Dbg.Levels.Warning)
+Dbg = Dbg.singleton
+Dbg = Dbg.setTagLevel(TAG, Dbg.Levels.Warning)
 
---- Is used to define a class
+-- MAYBE: Separate local functions into a utils file?
+-- MAYBE: Add a check to see if a class definition was attempted to be made with the same name as one already in the program
+-- TODO: Default for settings (make a default table in the correct shape and deep merge it in), also let other classes add to their own default
+
+local private = setmetatable({}, {__mode = 'k'}) -- Holds the private fields of a class, indexed by the instance reference
+
+--- @type ClassDefinition
+local BASE_CLASS_DEFINITION
+
+--- Returns an empty Class Definition (just in case you need to overwrite it)
+--- @return ClassDefinition
+local function getBaseClassDefinition()
+    return BASE_CLASS_DEFINITION
+end
 
 --- Gets the string className from the valid types
 --- @param klass string | ClassDefinition | Class
@@ -52,8 +65,6 @@ local function deepMerge(tbl, other)
         end
     end
 end
-
-local private = setmetatable({}, {__mode = 'k'}) -- Holds the private fields of a class, indexed by the instance reference
 
 --[[
     INHERITANCE
@@ -330,7 +341,8 @@ local function MakeClassDefinition(className)
             _checkWellFormed = true,
             checkWellFormed = true,
             markPublic = true,
-            markDefinitionOnly = true -- Ironic
+            markDefinitionOnly = true, -- Ironic
+            getBaseClassDefinition = true,
             -- ... rest is to be done using the markDefinitionOnly function
         },
         public = {
@@ -578,9 +590,12 @@ local function MakeClassDefinition(className)
         end
     end
 
+    -- This is a "just in case", idk if I will end up using it
+    cls.getBaseClassDefinition = getBaseClassDefinition
+
     return cls
 end
 
+BASE_CLASS_DEFINITION = MakeClassDefinition("") -- If require caches probably this is only called once
+
 return MakeClassDefinition
---- TODO:
---- Default for settings (make a default table in the correct shape and deep merge it in), also let other classes add to their own default
