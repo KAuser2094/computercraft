@@ -10,7 +10,7 @@ local _SimpleClassName = "Test_SimpleClass"
 local _SimpleClassDef = assert(require("common.Modules.Class.Simple")(_SimpleClassName))
 local _SimpleClass = assert(_SimpleClassDef.new())
 
---- @class TestClassDefinition : common.TestModuleDefinition
+--- @class test.TestClassDefinition : common.TestModuleDefinition
 local TestClass = SimpleClass("Test_Class", TestModule)
 
 function TestClass.init(this, kwargs)
