@@ -5,9 +5,11 @@ local TestModule = assert(require "common.Modules.Test.Test")
 
 local _ClassName = "Test_Class"
 local _ClassDef = assert(require("common.Modules.Class")(_ClassName))
+_ClassName = _ClassDef:getClassName()
 local _Class = assert(_ClassDef.new())
 local _SimpleClassName = "Test_SimpleClass"
 local _SimpleClassDef = assert(require("common.Modules.Class.Simple")(_SimpleClassName))
+_SimpleClassName = _SimpleClassDef:getClassName()
 local _SimpleClass = assert(_SimpleClassDef.new())
 
 --- @class test.TestClassDefinition : common.TestModuleDefinition

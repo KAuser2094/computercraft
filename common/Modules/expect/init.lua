@@ -22,8 +22,8 @@ expect.TYPES = {
     -- Extra types
     integer = "integer",
     callable = "callable",
-    class = "class",
-    classdefinition = "classdefinition",
+    Class = "Class",
+    ClassDefinition = "ClassDefinition",
 }
 
 --- @type table<string, boolean>
@@ -116,9 +116,9 @@ function expect.isType(value, type1, ...)
                 if valueType == "number" and value % 1 == 0 then return value end
             elseif ty == expect.TYPES.callable then
                 if valueType == "function" or (valueType == "table" and getmetatable(value).__call) then return value end
-            elseif ty == expect.TYPES.class then
+            elseif ty == expect.TYPES.Class then
                 if valueType == "table" and value.isAClass then return value end
-            elseif ty == expect.TYPES.classdefinition then
+            elseif ty == expect.TYPES.ClassDefinition then
                 if valueType == "table" and value.isAClassDefinition then return value end
             end
         end

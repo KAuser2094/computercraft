@@ -20,14 +20,14 @@ local function getBaseClassDefinition()
 end
 
 --- Creates A ClassDefinition Object
---- @param className string The class name (try to make this unique within the program)
+--- @param _className string The class name (try to make this unique within the program)
 --- @param base? common.Class.ClassDefinition
 --- @param ... common.Class.ClassDefinition
 --- @return common.Class.ClassDefinition BaseDefinition The Base ClassDefinition Object you can add onto.
-local function MakeClassDefinition(className, base, ...)
+local function MakeClassDefinition(_className, base, ...)
     --- @type (common.Class.ClassDefinition?)[] -- NOTE: THIS COULD END UP BEING SPARSE
     local bases = { base, ... }
-    Dbg.logI(TAG, "Creating ClassDef with name: " .. className)
+    Dbg.logI(TAG, "Creating ClassDef with name: " .. _className)
     local cls = {}
     --[[
         INHERITANCE (We do this first so we can set the values for later definition)
@@ -137,7 +137,7 @@ local function MakeClassDefinition(className, base, ...)
     --[[
         PRIVATE FIELDS AND METHODS
     ]]
-    cls.className = className
+    cls.className = _className .. "_" .. tostring(utils.getNewClassDefinitionID())
 
     --- @type common._C_lass._private.inherits
     cls.inherits = { [cls.className] = cls } -- You technically inherit yourself
@@ -225,7 +225,7 @@ local function MakeClassDefinition(className, base, ...)
     function cls:inheritsClass(klass)
         local klassName = utils.getClassNameFromTypesWithIt(klass)
         if not klassName then return false end
-        if klassName == className then return false end -- Is Exact Class
+        if klassName == cls.className then return false end -- Is Exact Class
         for baseName, _ in pairs(cls.inherits) do
             if baseName == klassName then return true end
         end

@@ -18,7 +18,7 @@ end
 --- @class test._E_xpect.container : _T_est_M_odule.container
 
 
-local s1Name = "gadfsafafna_1" -- Probably unique :)
+local s1Name = "gadfsafafna_1"
 local s2Name = "fdanfgdgdafg_2"
 local c1Name = "hghghtfgdrg_1"
 local c2Name = "thgjhjghhjgj_2"
@@ -27,6 +27,11 @@ local sd1 = SimpleClassMaker(s1Name)
 local sd2 = SimpleClassMaker(s2Name, sd1)
 local cd1 = ClassMaker(c1Name)
 local cd2 = ClassMaker(c2Name, cd1)
+
+s1Name = sd1:getClassName()
+s2Name = sd2:getClassName()
+c1Name = cd1:getClassName()
+c2Name = cd2:getClassName()
 
 local si1 = sd1.new()
 local si2 = sd2.new()
@@ -65,10 +70,10 @@ TestClass:addTest("expect and expectWithTag", function (container)
         -- Extra base types
         { TAG, "id",    ctbl,   pc.TYPES.callable }, { TAG, "id",    fn,   pc.TYPES.callable }, --
         { TAG, "id",    5,      pc.TYPES.integer }, --
-        { TAG, "id",    ci1,    pc.TYPES.class }, --
-        { TAG, "id",    si1,    pc.TYPES.class }, --
-        { TAG, "id",    cd1,    pc.TYPES.classdefinition }, --
-        { TAG, "id",    sd1,    pc.TYPES.classdefinition }, --
+        { TAG, "id",    ci1,    pc.TYPES.Class }, --
+        { TAG, "id",    si1,    pc.TYPES.Class }, --
+        { TAG, "id",    cd1,    pc.TYPES.ClassDefinition }, --
+        { TAG, "id",    sd1,    pc.TYPES.ClassDefinition }, --
         -- Check multiple types works
         { TAG, "id",    "s",    "string", "number", "nil" }, --
         { TAG, "id",    1,      "string", "number", "nil" }, --
@@ -123,10 +128,10 @@ TestClass:addTest("expect and expectWithTag", function (container)
         -- Extra base types
         { TAG, "id",    {},   pc.TYPES.callable }, { TAG, "id",    nil,   pc.TYPES.callable }, --
         { TAG, "id",    1.5,      pc.TYPES.integer }, --
-        { TAG, "id",    {},    pc.TYPES.class }, --
-        { TAG, "id",    {},    pc.TYPES.class }, --
-        { TAG, "id",    {},    pc.TYPES.classdefinition }, --
-        { TAG, "id",    {},    pc.TYPES.classdefinition }, --
+        { TAG, "id",    {},    pc.TYPES.Class }, --
+        { TAG, "id",    {},    pc.TYPES.Class }, --
+        { TAG, "id",    {},    pc.TYPES.ClassDefinition }, --
+        { TAG, "id",    {},    pc.TYPES.ClassDefinition }, --
         -- Check multiple types works
         { TAG, "id",    nil,    "string", "number", "ni" }, --
         { TAG, "id",    nil,      "string", "number", "ni" }, --

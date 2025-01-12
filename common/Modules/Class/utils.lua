@@ -8,9 +8,16 @@ local utils = {}
 
 local private = setmetatable({}, {__mode = 'k'}) -- Holds the private fields of a class, indexed by the instance reference
 
+local ClassDefinitionID = -1 -- Will get incrememnted when first called
+
 --[[
     HERE IS EVERYTHING NEEDED FOR CLASS
 ]]
+
+function utils.getNewClassDefinitionID()
+    ClassDefinitionID = ClassDefinitionID + 1
+    return ClassDefinitionID
+end
 
 --- Gets the string className from the valid types
 --- @param klass string | common.Class.ClassOrDefinition

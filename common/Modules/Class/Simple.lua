@@ -30,17 +30,17 @@ local doNotInherit = {
 }
 
 --- Returns a simplified class definition
---- @param className string
+--- @param _className string
 --- @param base? common.Class.SimpleClassDefinition
 --- @param ... common.Class.SimpleClassDefinition
 --- @return common.Class.SimpleClassDefinition
-local function MakeSimpleClassDefinition(className, base, ...)
+local function MakeSimpleClassDefinition(_className, base, ...)
     --- @type (common.Class.SimpleClassDefinition?)[] -- NOTE: THIS COULD END UP BEING SPARSE
     local bases = { base, ... }
-    Dbg.logI(TAG, "Creating ClassDef with name: " .. className)
+    Dbg.logI(TAG, "Creating ClassDef with name: " .. _className)
     local cls = {}
 
-    cls.className = className
+    cls.className = _className .. "_" .. tostring(utils.getNewClassDefinitionID())
 
     cls.inherits = { [cls.className] = cls }
 
@@ -148,6 +148,7 @@ local function MakeSimpleClassDefinition(className, base, ...)
 
         return rawget(cls, key)
     end
+
     cls.__expect = utils.__expect
 
     cls.__expectGetTypes = utils.__expectGetTypes
