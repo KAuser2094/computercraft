@@ -285,34 +285,34 @@ function utils.preNewIndex(cls, this, key, value) end
 --- PRIVATE
 
 --- Gets the private table for the instance
---- @param self common.Class.Class
+--- @param self common.Class.ClassOrDefinition
 --- @return table
 function utils.getPrivateTable(self)
     return private[self] -- If we are holding a reference to the table, then the key still exists
 end
 
 --- Gets the private table for the instance
---- @param self common.Class.Class
+--- @param self common.Class.ClassOrDefinition
 --- @param key any Gets the private instance value at the key (This is already added to __index so you likely do not need to use this)
 function utils.getPrivate(self, key)
-    if not self.isAClass then return end
+    if not (self.isAClass or self.isAClassDefinition) then return end
     return private[self][key]
 end
 
 --- Completely replaces the private instance table (Sometimes it is easier to get the whole table, do work, and set it back)
---- @param self common.Class.Class
+--- @param self common.Class.ClassOrDefinition
 --- @param tbl table
 function utils.setPrivateTable(self, tbl)
-    if not self.isAClass then return end
+    if not (self.isAClass or self.isAClassDefinition) then return end
     private[self] = tbl
 end
 
 --- Sets a private instance key-value pair (user won't be able to see it in the instance table)
---- @param self common.Class.Class
+--- @param self common.Class.ClassOrDefinition
 --- @param key any
 --- @param value any
 function utils.setPrivate(self, key, value)
-    if not self.isAClass then return end
+    if not (self.isAClass or self.isAClassDefinition) then return end
     private[self][key] = value
 end
 

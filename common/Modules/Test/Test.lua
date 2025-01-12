@@ -1,6 +1,7 @@
 local cdm = require "common.Modules.Class.Simple"
-
---- TODO: Make this follow the coding style I decided on
+local TAG = "TEST MODULE BASE"
+local Dbg = require "common.Modules.Logger".singleton
+Dbg = Dbg.setTagLevel(TAG, Dbg.Levels.Warning)
 
 --- @class common.ITestModule : common.Class.IClass
 --- @field testCount integer
@@ -29,16 +30,19 @@ end
 --- @param this common.Test.TestModule
 --- @param kwargs _T_est_M_odule_D_efinition.new.kwargs
 function Test.init(this, kwargs)
+    -- Get the top level definition this is:
+    Dbg.logT(TAG, this.inherits, this:getClassName(), this:getAllClassNames())
+    local thisDef = this.inherits[this:getClassName()]
+
+    --- @type table<string, fun(container: table)>
+    this.tests = thisDef:getPrivate("tests") or {}
+    --- @type integer
+    this.testCount = thisDef:getPrivate("testCount") or 0
+
     this.TAG = this:getClassName()
     this.dbg = kwargs.Logger
     this.dbg.logV(this.TAG, "Created TestModule:", this.TAG)
 end
-
---- @type table<string, fun(container: table)>
-Test.tests = {}
-
---- @type integer
-Test.testCount = 0
 
 --- @class _T_est_M_odule.container
 --- @field TAG string
@@ -56,7 +60,7 @@ function Test.run(this)
         this.dbg.logI(testName, "Running...")
         local container = { TAG = testName, Logger = this.dbg }
         this:testInit(container)
-        local ok, err = pcall(fn, container)
+        local ok, _ = pcall(fn, container)
         if ok then
             passed = passed or {}
             table.insert(passed, testName)
@@ -77,8 +81,10 @@ function Test.testInit(this, testContainer) end
 --- @param testName string
 --- @param testFn fun(container: table)
 function Test:addTest(testName, testFn)
-    self.tests[testName] = testFn
-    self.testCount = self.testCount + 1
+    if not self:getPrivate("tests") then self:setPrivate("tests", {}) end
+    if not self:getPrivate("testCount") then self:setPrivate("testCount", 0) end
+    self:getPrivate("tests")[testName] = testFn
+    self:setPrivate("testCount", self:getPrivate("testCount") + 1)
 end
 
 return Test

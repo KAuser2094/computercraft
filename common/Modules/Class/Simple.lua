@@ -37,6 +37,7 @@ local classDefOnly = {
 
 local doNotInherit = {
     className = true,
+    inherits = true,
 }
 
 --- Returns a simplified class definition
@@ -75,6 +76,8 @@ local function MakeSimpleClassDefinition(className, base, ...)
     cls.setPrivateTable = utils.setPrivateTable
 
     cls.setPrivate = utils.setPrivate
+
+    cls:setPrivateTable({})
 
 
     --- CLASS NAME / TYPE CHECKS AND OTHER

@@ -3,6 +3,8 @@ Dbg = Dbg.singleton
 local TAG = "EXPECT"
 Dbg = Dbg.setTagLevel(TAG, Dbg.Levels.Warning)
 
+local pretty = assert(require("cc.pretty"))
+
 --- @class common.expect
 local expect = {} -- Don't really like this name but I want this to be a replacement to "cc.expect"
 
@@ -10,8 +12,17 @@ local expect = {} -- Don't really like this name but I want this to be a replace
 
 --- @enum _e_xpect.type_strings
 expect.TYPES = {
-    NIL = "nil",
-    BOOLEAN = "boolean",
+    ["nil"] = "nil",
+    boolean = "boolean",
+    string = "string",
+    number = "number",
+    ["function"] = "function",
+    table = "table,",
+    thread = "thread",
+    userdata = "userdata",
+    -- Extra types
+    integer = "integer",
+    callable = "callable",
 }
 
 --- @type table<string, boolean>
@@ -24,6 +35,7 @@ local enabledTags = { [""] = true }
 --- @param types table
 local function failedExpeect(tag, index, value, types)
     Dbg.logE(tag, index, ":", value, "does not have types from:", types)
+    error(pretty.render(pretty.concat( pretty.pretty(tag), pretty.space, pretty.pretty(index),  pretty.space, pretty.pretty(value), pretty.space, pretty.pretty(types))))
 end
 
 --- Sets this tag's level for expects
@@ -67,11 +79,30 @@ end
 --- @return `T`? value Returns the value if success
 function expect.expectWithTag(tag, index, value, type1, ...)
     if not enabledTags[tag] then return value end -- Not enabled
+    local ret = expect.isType(value, type1, ...)
+    return ret ~= nil and ret or failedExpeect(tag, index, value, { type1, ... })
+end
+
+--- @generic T
+--- @param value `T`
+--- @param type1 _e_xpect.type_input
+--- @param ... _e_xpect.type_input
+--- @return `T`? value Returns the value if success
+function expect.isType(value, type1, ...)
     local args = { type1, ... }
-    local valueImplementsIExpect = not not value.__expect
+    local valueImplementsIExpect = type(value) == "table" and not not value.__expect
     local valueType = type(value)
     for _, ty in pairs(args) do -- technically select would be more effecient...
-        if valueType == ty then return value end -- We don't actually need to check if it is a base type
+        -- Base + My_Own_Generic types
+        if type(ty) == "string" then
+            if valueType == ty then return value end -- Base types
+            if ty == "integer" then
+                if type(value) == "number" and value % 1 == 0 then return value end
+            elseif ty == "callable" then
+                if type(value) == "function" or (type(value) == "table" and getmetatable(value).__call) then return value end
+            end
+        end
+        -- Class specific types
         if valueImplementsIExpect then
             if value:__expect(ty) then return value end
             if type(ty) == "table" and ty.__expectGetTypes then
@@ -81,9 +112,7 @@ function expect.expectWithTag(tag, index, value, type1, ...)
             end
         end
     end
-    return failedExpeect(tag, index, value, args)
+    return nil
 end
 
-return {
-
-}
+return expect

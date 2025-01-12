@@ -141,6 +141,9 @@ local function MakeClassDefinition(className)
 
     cls.setPrivate = utils.setPrivate
 
+    -- Class definitions should have there own private table. (This is usually used for stuff that both need to be in inherited but not their contents, so we use getters and setters)
+    cls:setPrivateTable({})
+
     --- KEY CONFLICTS
 
     --- Adds the key to effective keys

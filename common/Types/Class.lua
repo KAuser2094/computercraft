@@ -36,10 +36,10 @@ local Class__public = {}
 --- @class _C_lass._private : common.Modules.expect.IExpect -- The fields and methods we want private to the user (Hidden using __index)
 --- @field className string -- Throws an error if same program tries to define the same className twice. (MAYBE: change to just add increasing digits after)
 --- @field inherits common._C_lass._private.inherits -- Holds all the className's this inherits from
---- @field getPrivateTable fun(self: common.Class.Class): table -- Gets the instances private table
---- @field getPrivate fun(self: common.Class.Class, key: any): any -- Gets the value at the instances private table using the key
---- @field setPrivateTable fun(self: common.Class.Class, tbl: table) -- Replaces the instance's private table with the given
---- @field setPrivate fun(self: common.Class.Class, key: any, value: any) -- Sets the key-value to the instnace's private table
+--- @field getPrivateTable fun(self: common.Class.ClassOrDefinition): table -- Gets the instances private table
+--- @field getPrivate fun(self: common.Class.ClassOrDefinition, key: any): any -- Gets the value at the instances private table using the key
+--- @field setPrivateTable fun(self: common.Class.ClassOrDefinition, tbl: table) -- Replaces the instance's private table with the given
+--- @field setPrivate fun(self: common.Class.ClassOrDefinition, key: any, value: any) -- Sets the key-value to the instnace's private table
 local Class__private = {}
 
 --[[
