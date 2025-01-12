@@ -41,7 +41,7 @@ local function failedExpeect(tag, index, value, types)
     error(err)
 end
 
---- Sets this tag's level for expects
+--- Sets this tag's level for expects (This just sets the tags level in the singleton, arguably should be doing that yourself directly)
 --- @param tag string
 --- @param level _L_ogger.LoggerLevel
 --- @return common.expect self -- For chaining
@@ -57,6 +57,15 @@ function expect.enableTag(tag)
     enabledTags[tag] = true
     return expect
 end
+
+--- Disables expect for the tag (note: no tag is always enabled)
+--- @param tag string
+--- @return common.expect -- For chaining
+function expect.disableTag(tag)
+    enabledTags[tag] = false
+    return expect
+end
+
 
 --- Does the same as `cc.expect` but also works if the table implements `IExpect`
 --- `IExpect` is `__expect fun(self, type: any):boolean` and `__expectGetTypes fun(self):any[]`
