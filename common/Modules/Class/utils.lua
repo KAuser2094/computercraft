@@ -39,9 +39,9 @@ end
 --- @param preserve? string[]
 function utils.shallowMergeWithPreserve(tbl, other, preserve)
     for k,v in pairs(other) do
-        if (preserve and preserve[k]) then -- Case: Preserve
-            -- print("Preserved " .. k)
-        else -- Case: Overwrite
+        if not preserve then
+            tbl[k] = v
+        elseif not preserve[k] then
             tbl[k] = v
         end
     end
@@ -72,7 +72,6 @@ function utils._basicInheritInto(self, klass)
     utils.deepMerge(klass.__inheritanceSettings, self.__inheritanceSettings)
     utils.deepMerge(klass.__instanceSettings, self.__instanceSettings)
     utils.deepMerge(klass.__otherSettings, self.__otherSettings) -- This COULD mess up some settings
-
     utils.shallowMergeWithPreserve(klass, self, klass.__inheritanceSettings.doNotCopy)
 
     for k, v in pairs(klass.__inheritanceSettings.merge) do
@@ -325,20 +324,15 @@ end
 --- @param ty any
 --- @return boolean
 function utils.__expect(self, ty)
-    if type(ty) == string then
-        return self.getClassName() == ty
-    end
-    if type(ty) == "table" and ty.isAClassDefinition or ty.isAClass then
-        return self:isClass(ty:getClassName())
-    end
-    return false
+    if not (type(ty) == "string" or ty.isAClass or ty.isAClassDefinition) then return false end
+    return self:isClass(ty)
 end
 
 --- Returns all types (all class names)
 --- @param self common.Class.ClassOrDefinition
 --- @return string[]
 function utils.__expectGetTypes(self)
-    return self:getAllClassNames()
+    return { self:getClassName() } -- We only want to consider the top level type, any shared inheritance should be checked using that type not this
 end
 
 --[[

@@ -37,6 +37,11 @@ local function MakeClassDefinition(className, base, ...)
     cls.__inheritanceSettings = {
         doNotCopy = {
             className = true,
+            getClassName = true, -- These use the "className" up value, hence why we cannot copy them (technically could just not do that...)
+            getAllClassNames = true,
+            isClass = true,
+            isExactClass = true,
+            inheritsClass = true,
             __inheritanceSettings = true, -- This is ALWAYS deep merged on inherit
             __instanceSettings = true, -- This is ALWAYS deep merged on inherit
             __otherSettings = true, -- This is ALWAYS deep merged on inherit, also deep merged with "default.__otherSettings"

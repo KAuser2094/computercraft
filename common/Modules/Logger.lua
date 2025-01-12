@@ -2,7 +2,6 @@
 
 --- TODO:
 --- Make a "forceLevel" that is default nil, if set then it forces level to only be upto the forceLevel even if the tag's severity is higher
---- Make a "singleton" that will cache its instance that modules may use.
 --- Make a way to "discard" certain levels (usually Fatal)
 --- Add a hook into "error" and log the stack trace before it errors out
 
@@ -30,20 +29,77 @@ local DebugLevel = {
 
 --- @class _L_ogger.new.kwargs The form the table passed into "new" should be when creating a new logger instance
 --- @field path? string Path of the log file, defaults to "./log.txt"
---- @field globalLevel? _L_ogger.LoggerLevel Level to default any tags to, default global level is verbose (AKA log all)
+--- @field level? _L_ogger.LoggerLevel Level to default any tags to, default global level is verbose (AKA log all)
 --- @field logsToKeep? integer Amount of logs to store before deleting the oldest
 --- @field outputTerminal? ccTweaked.term.Redirect Terminal to print to. Default just won't print
+--- @field flattenPrintOut? boolean
 
 --- Creates an instance of the logger
 --- @param kwargs? _L_ogger.new.kwargs Table with key-value pairs defined by the type
 --- @return common.Logger LoggerInstance A new logger instance
 local function new(kwargs)
     kwargs = kwargs or {} -- nil check
-    local path = kwargs.path or "/log.txt"
-    local globalLevel = kwargs.globalLevel or DebugLevel.Verbose
+
+    --- @type integer
     local logsToKeep = kwargs.logsToKeep or 300
-    local outputTerminal = kwargs.outputTerminal
-    local flattenPrintOut = false
+
+    --- @class _L_ogger.settings
+    local settings = {
+        path = kwargs.path or "/log.txt", --- @type filePath
+        level = kwargs.level or DebugLevel.Verbose, --- @type _L_ogger.LoggerLevel
+        outputTerminal = kwargs.outputTerminal, --- @type ccTweaked.term.Redirect?
+        flattenPrintOut = kwargs.flattenPrintOut or false, --- @type boolean
+    }
+
+    --- @param _path filePath
+    --- @return _L_ogger.settings self -- Chaining
+    function settings:setPath(_path)
+        self.path = _path
+        return self
+    end
+
+    --- @param _level _L_ogger.LoggerLevel
+    --- @return _L_ogger.settings self -- Chaining
+    function settings:setLevel(_level)
+        self.level = _level
+        return self
+    end
+
+    --- @param _outputTerminal? ccTweaked.term.Redirect
+    --- @return _L_ogger.settings self -- Chaining
+    function settings:setOutputTerminal(_outputTerminal)
+        self.outputTerminal = _outputTerminal
+        return self
+    end
+
+    --- @return self -- Chaining
+    function settings:removeTerminal()
+        self.outputTerminal = nil
+        return self
+    end
+
+    --- @param _flattenPrintOut boolean
+    --- @return _L_ogger.settings self -- Chaining
+    function settings:setFlattenPrintOut(_flattenPrintOut)
+        self.flattenPrintOut = _flattenPrintOut
+        return self
+    end
+
+    --- @return _L_ogger.settings copy
+    function settings:getCopy()
+        local function deepCopy(tbl)
+            local copy = {}
+            for k,v in pairs(tbl) do
+                if type(v) == "table" then
+                    copy[k] = deepCopy(v)
+                else
+                    copy[k] = v
+                end
+            end
+            return copy
+        end
+        return deepCopy(self)
+    end
 
     --- @class _L_ogger.Log
     --- @field level _L_ogger.LoggerLevel
@@ -56,28 +112,16 @@ local function new(kwargs)
     --- @class common.Logger
     local this = {}
 
-    --- @type table<string, _L_ogger.LoggerLevel>
-    this.Tags = {}
+    --- @type table<string, _L_ogger.settings>
+    this.TagSettings = {}
 
     this.Levels = DebugLevel
 
-    --- Sets path to log file
-    --- @param _path filePath
-    --- @return common.Logger self For chaining
-    function this.setPath(_path)
-        path = _path
-        return this
-    end
+    --[[
+        GLOBAL SETTINGS
+    ]]
 
-    --- Sets Global Level
-    --- @param level _L_ogger.LoggerLevel
-    --- @return common.Logger  self For chaining
-    function this.setGlobalLevel(level)
-        globalLevel = level
-        return this
-    end
-
-    --- Sets the amount of logs to keep
+    --- Sets the amount of logs to keep (Note this is only a global setting, tags all share the same global log count)
     --- @param _logsToKeep integer
     --- @return common.Logger  self For chaining
     function this.setLogsToKeep(_logsToKeep)
@@ -85,41 +129,121 @@ local function new(kwargs)
         return this
     end
 
+    --- Sets Global Level
+    --- @param level _L_ogger.LoggerLevel
+    --- @return common.Logger  self For chaining
+    function this.setGlobalLevel(level)
+        settings.level = level
+        return this
+    end
+
+    --- Sets path to log file
+    --- @param _path filePath
+    --- @return common.Logger self For chaining
+    function this.setGlobalPath(_path)
+        settings.path = _path
+        return this
+    end
+
     --- Sets the output terminal
     --- @param terminal? ccTweaked.term.Redirect
     --- @return common.Logger self For chaining
-    function this.setOutputTerminal(terminal)
-        outputTerminal = terminal
+    function this.setGlobalOutputTerminal(terminal)
+        settings.outputTerminal = terminal
         return this
     end
 
     -- Returns the outputTerminal (if any)
     --- @return ccTweaked.term.Redirect? outputTerminal
-    function this.getOutputTerminal()
-        return outputTerminal
-    end
-
-    --- Sets the tag to the passed in leve
-    --- @param tag string to change level
-    --- @param level _L_ogger.LoggerLevel Level to change to
-    --- @return common.Logger self For chaining
-    function this.setTagLevel(tag, level)
-        this.Tags[tag] = level
-        return this
+    function this.getGlobalOutputTerminal()
+        return settings.outputTerminal
     end
 
     --- @param bool boolean Whether to flatten out when logging out to terminal
     --- @return common.Logger self For chaining
-    function this.setFlattenPrintOut(bool)
-        flattenPrintOut = bool
+    function this.setGlobalFlattenPrintOut(bool)
+        settings.flattenPrintOut = bool
         return this
     end
 
+    --[[
+        TAG SETTINGS
+    ]]
+
+    --- Sets the tag to the passed in settings
+    --- @param tag string
+    --- @param _setting _L_ogger.settings Level to change to
+    --- @return common.Logger self For chaining
+    function this.setTagSettings(tag, _setting)
+        this.TagSettings[tag] = _setting
+        return this
+    end
+
+    --- Gets the settings of the passed in tag (will be set to global settings if not previously set)
+    --- @param tag string
+    --- @return _L_ogger.settings tagSetting
+    function this.getTagSettings(tag)
+        if not this.TagSettings[tag] then this.setTagSettings(tag, settings:getCopy()) end
+        return this.TagSettings[tag]
+    end
+
+    --- Sets the tag to the passed in level
+    --- @param tag string to change level
+    --- @param level _L_ogger.LoggerLevel Level to change to
+    --- @return common.Logger self For chaining
+    function this.setTagLevel(tag, level)
+        this.getTagSettings(tag).level = level
+        return this
+    end
     this.setTagLevel("", DebugLevel.Verbose) -- Anything logged with no tag should always print.
+
+    --- Gets the level of the passed in tag (will be set to global settings if not previously set)
+    --- @param tag string
+    --- @return _L_ogger.LoggerLevel tagLevel
+    function this.getTagLevel(tag)
+        return this.getTagSettings(tag).level
+    end
+
+    --- Sets path to log file
+    --- @param tag string
+    --- @param _path filePath
+    --- @return common.Logger self For chaining
+    function this.setTagPath(tag, _path)
+        this.getTagSettings(tag).path = _path
+        return this
+    end
+
+    --- Sets the output terminal
+    --- @param tag string
+    --- @param terminal? ccTweaked.term.Redirect
+    --- @return common.Logger self For chaining
+    function this.setTagOutputTerminal(tag, terminal)
+        this.getTagSettings(tag).outputTerminal = terminal
+        return this
+    end
+
+    --- Returns the outputTerminal (if any)
+    --- @param tag string
+    --- @return ccTweaked.term.Redirect? outputTerminal
+    function this.getTagOutputTerminal(tag)
+        return this.getTagSettings(tag).outputTerminal
+    end
+
+    --- @param tag string
+    --- @param bool boolean Whether to flatten out when logging out to terminal
+    --- @return common.Logger self For chaining
+    function this.setTagFlattenPrintOut(tag, bool)
+        this.getTagSettings(tag).flattenPrintOut = bool
+        return this
+    end
+
+    --[[
+        ACTUAL LOG
+    ]]
 
     --- Writes everything in "Logs" to the log file defined by path
     local function addToLogFile()
-        local file = fs.open(path, "w")
+        local file = fs.open(settings.path, "w")
         if file then
             for _, Log in pairs(Logs) do
                 file.write(p.render(Log.doc) .. "\n")
@@ -136,8 +260,10 @@ local function new(kwargs)
         local args = {...}
         --- @type ccTweaked.cc.pretty.Doc[]
         local docs = {}
-        for _, arg in ipairs(args) do
-            table.insert(docs, p.pretty(arg))
+        local count = select("#", ...)
+        for i=1, count do
+            local a = args[i]
+            table.insert(docs, p.pretty(a))
             table.insert(docs, p.space_line)
         end
 
@@ -160,16 +286,17 @@ local function new(kwargs)
     --- @param level _L_ogger.LoggerLevel The level to log at
     --- @param ... any Anything you wish to log
     local function log(tag, level, ...)
-        if not this.Tags[tag] then this.setTagLevel(tag, globalLevel) end
+        local tagSettings = this.getTagSettings(tag)
+        local tagLevel = this.getTagLevel(tag)
 
-        if level.severity <= this.Tags[tag].severity then
+        if level.severity <= tagLevel.severity then
             local logDoc = buildLogDoc(...)
             local prefix = buildLogPrefix(tag, level)
             local fullDoc = p.concat(prefix, p.space, logDoc)
             local flattenedDoc = p.group(fullDoc)
-            if outputTerminal then
+            if tagSettings.outputTerminal then
                 -- TODO: Add an option to print out flattened
-                p.print(flattenPrintOut and flattenedDoc or fullDoc)
+                p.print(tagSettings.flattenPrintOut and flattenedDoc or fullDoc)
             end
 
             --- @type _L_ogger.Log
@@ -197,10 +324,13 @@ local function new(kwargs)
     Verbose = {prefix = "[VRB]", colour = colours.cyan, severity = 6}, --- @type Logger.LoggerLevel
     --]]
 
-    --- Logs with no tag. (Technically setting tag to "" and level to Temporary)
+    --- Logs with no tag. (Technically setting tag to "" and level to Temporary), Note: this log specifically makes sure to always print to `term.current()`
     --- @param ... any Anything to log
     function this.logNoTag(...)
+        local oldTerm = this.getTagOutputTerminal("")
+        this.setTagOutputTerminal("", term.current())
         log("", DebugLevel.Temporary, ...)
+        this.setTagOutputTerminal("", oldTerm)
     end
 
     --- Attempts to Log Temporary
@@ -252,6 +382,10 @@ local function new(kwargs)
         log(tag, DebugLevel.Verbose, ...)
     end
 
+    --[[
+        CUSTOM ERROR
+    ]]
+
     --- Errors the program at the given level, printing out the message (and usually some info of error location before it). Will also log a Fatal level log at NoTag.
     --- @param message? any
     --- @param level? integer
@@ -275,6 +409,10 @@ local function new(kwargs)
         error(message, level)
     end
 
+    --[[
+        CUSTOM ASSERT
+    ]]
+
     --- Asserts that `v` is truthy and if so returns ALL arguments, otherwise assertion error and displays the `message` given.
     --- Also logs fatal if the assertion fails at NoTag
     --- @param v? any -- Why the heck is this optional? I am just following how native assert() works...
@@ -282,6 +420,15 @@ local function new(kwargs)
     --- @param ...? any
     function this.assert(v, message, ...)
         return this.assertWithTag("", v, message, ...)
+    end
+
+    --- Asserts that `v` is falsy and if so returns ALL arguments, otherwise assertion error and displays the `message` given.
+    --- Also logs fatal if the assertion fails at NoTag
+    --- @param v? any -- Why the heck is this optional? I am just following how native assert() works...
+    --- @param message? any
+    --- @param ...? any
+    function this.assertNot(v, message, ...)
+        return this.assertNotWithTag("", v, message, ...)
     end
 
     --- Asserts that `v` is truthy and if so returns ALL arguments EXCEPT `tag`, otherwise assertion error and displays the `message` given.
@@ -298,18 +445,47 @@ local function new(kwargs)
         end
     end
 
+    --- Asserts that `v` is falsy and if so returns ALL arguments EXCEPT `tag`, otherwise assertion error and displays the `message` given.
+    --- Also logs fatal if the assertion fails at `tag`
+    --- @param v? any -- Why the heck is this optional? I am just following how native assert() works...
+    --- @param message? any
+    --- @param ...? any
+    function this.assertNotWithTag(tag, v, message, ...)
+        local ret = { this.assertWithTag(tag, not v, message, ...) }
+        ret[2] = v -- Turn it back into the value, not a boolean
+        return ret
+    end
+
     --- Some as `Logger.assert` but will run `fn(table.unpack(args))` and `v` is whether it does not errror.
     --- Similarly, instead of returning v it will returns all return values of the function at the front.
     --- @param fn any
-    --- @param args any
+    --- @param args? any[]
     --- @param message any
     --- @param ... any
     function this.assertFunctionRuns(fn, args, message, ...)
         return this.assertFunctionRunsWithTag("", fn, args, message, ...)
     end
 
+    --- Some as `Logger.assert` but will run `fn(table.unpack(args))` and `v` is whether it DOES errror.
+    --- and instead of `fn` and `args` it will return `ok` and `err` from the pcall
+    --- @param fn any
+    --- @param args? any[]
+    --- @param message any
+    --- @param ... any
+    function this.assertFunctionErrors(fn, args, message, ...)
+        return this.assertFunctionErrorsWithTag("", fn, args, message, ...)
+    end
+
+    --- Some as `Logger.assert` but will run `fn(table.unpack(args))` and `v` is whether it does not errror.
+    --- Similarly, instead of returning v it will returns all return values of the function at the front.
+    --- @param tag string
+    --- @param fn any
+    --- @param args? any[]
+    --- @param message any
+    --- @param ... any
     function this.assertFunctionRunsWithTag(tag, fn, args, message, ...)
         -- Not actually using assert here for the success case, so if someone was expecting to hook assert then RIP
+        args = args or {} -- In case no arguments
         local protected = { pcall(fn, table.unpack(args)) }
 
         if protected[1] then -- Did not error
@@ -317,13 +493,43 @@ local function new(kwargs)
             return table.unpack(protected), message, ...
         else
             local pretty_args = {} -- Note: Will end up with a space line in front
-            for _, arg in pairs(args) do
-                table.insert(pretty_args, p.space_line)
-                table.insert(pretty_args, p.pretty(arg))
+            if args then
+                for _, arg in pairs(args) do
+                    table.insert(pretty_args, p.space_line)
+                    table.insert(pretty_args, p.pretty(arg))
+                end
             end
             local fn_args_msg = p.render(p.concat(p.pretty(fn), p.space, "ran on", table.unpack(pretty_args)))
 
             return this.assertWithTag(tag, false and fn_args_msg, message .. "\t[ERROR]: " .. protected[2])
+        end
+    end
+
+    --- Some as `Logger.assert` but will run `fn(table.unpack(args))` and `v` is whether it DOES errror.
+    --- and instead of `fn` and `args` it will return `ok` and `err` from the pcall
+    --- @param tag string
+    --- @param fn any
+    --- @param args? any[]
+    --- @param message any
+    --- @param ... any
+    function this.assertFunctionErrorsWithTag(tag, fn, args, message, ...)
+        -- Not actually using assert here for the success case, so if someone was expecting to hook assert then RIP
+        args = args or {} -- In case no arguments
+        local protected = { pcall(fn, table.unpack(args)) }
+
+        if protected[1] then -- Did not error
+            local pretty_args = {} -- Note: Will end up with a space line in front
+            if args then
+                for _, arg in pairs(args) do
+                    table.insert(pretty_args, p.space_line)
+                    table.insert(pretty_args, p.pretty(arg))
+                end
+            end
+            local fn_args_msg = p.render(p.concat(p.pretty(fn), p.space, "ran on", table.unpack(pretty_args)))
+
+            return this.assertWithTag(tag, false and fn_args_msg, message .. "\t[EXPECTED ERROR]: " .. protected[2])
+        else
+            return protected[1], protected[2], message, ...
         end
     end
 
@@ -333,8 +539,8 @@ end
 return setmetatable(
 {
     new = new,
-    -- require SHOULD be caching this, so this will only ever be a single instead
-    singleton = new().setOutputTerminal(nil).setGlobalLevel(DebugLevel.Verbose).setLogsToKeep(300).setPath("/log/program/" .. (arg and arg[0] .. ".txt" or "unkown_script_name.txt"))
+    -- require SHOULD be caching this, so this will only ever be a single instance
+    singleton = new().setGlobalOutputTerminal(nil).setGlobalLevel(DebugLevel.Verbose).setLogsToKeep(300).setGlobalPath("/log/program/" .. (arg and arg[0] .. ".txt" or "unkown_script_name.txt"))
 },
 {__call = function (_,...)
         new(...)

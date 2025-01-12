@@ -31,7 +31,6 @@ end
 --- @param kwargs _T_est_M_odule_D_efinition.new.kwargs
 function Test.init(this, kwargs)
     -- Get the top level definition this is:
-    Dbg.logT(TAG, this.inherits, this:getClassName(), this:getAllClassNames())
     local thisDef = this.inherits[this:getClassName()]
 
     --- @type table<string, fun(container: table)>

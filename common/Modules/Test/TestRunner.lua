@@ -69,6 +69,7 @@ end
 function TestRunner.setVerbose(this)
     this.dbg.setGlobalLevel(this.dbg.Levels.Verbose)
     this.dbg.setTagLevel(TAG, this.dbg.Levels.Verbose)
+
     for _, module in ipairs(this.modules) do
         module.dbg.setTagLevel(module.TAG, module.dbg.Levels.Verbose)
     end
@@ -89,8 +90,12 @@ end
 --- @param this common.Test.TestRunner
 --- @return common.Test.TestRunner this -- For chaining
 function TestRunner.setSilent(this)
-    this.oldTerm = this.dbg.getOutputTerminal()
-    this.dbg.setOutputTerminal() -- Simply don't log to the terminal :)
+    this.oldTerm = this.dbg.getGlobalOutputTerminal()
+    this.dbg.setGlobalOutputTerminal() -- Simply don't log to the terminal :)
+    this.dbg.getTagSettings(TAG):setOutputTerminal()
+    for _, module in ipairs(this.modules) do
+        module.dbg.getTagSettings(module.TAG):setOutputTerminal()
+    end
     return this
 end
 
@@ -100,7 +105,11 @@ end
 function TestRunner.setShow(this, terminal)
     this.completeSilent = false
     terminal = terminal or this.oldTerm
-    this.dbg.setOutputTerminal(terminal)
+    this.dbg.setGlobalOutputTerminal(terminal)
+    this.dbg.getTagSettings(TAG):setOutputTerminal(terminal)
+    for _, module in ipairs(this.modules) do
+        module.dbg.getTagSettings(module.TAG):setOutputTerminal(terminal)
+    end
     this.oldTerm = nil
     return this
 end
@@ -171,7 +180,7 @@ function TestRunner.run(this)
     if this.oldTerm and not this.completeSilent then -- If the logger printout was silenced but you still want to see results
         p.print(formattedResultsDoc)
     end
-    this.dbg.logT(TAG, p.line, formattedResultsDoc)
+    this.dbg.logT(TAG, "RESULTS:", p.line, formattedResultsDoc)
     return this.results
 end
 
