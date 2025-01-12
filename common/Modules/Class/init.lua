@@ -42,6 +42,8 @@ local function MakeClassDefinition(className, base, ...)
             isClass = true,
             isExactClass = true,
             inheritsClass = true,
+            _new = true,
+            new = true,
             __inheritanceSettings = true, -- This is ALWAYS deep merged on inherit
             __instanceSettings = true, -- This is ALWAYS deep merged on inherit
             __otherSettings = true, -- This is ALWAYS deep merged on inherit, also deep merged with "default.__otherSettings"
