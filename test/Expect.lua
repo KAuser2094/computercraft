@@ -33,7 +33,6 @@ local si2 = sd2.new()
 local ci1 = cd1.new()
 local ci2 = cd2.new()
 
-
 --[[
 TestClass:addTest("CHANGME", function (container)
     --- @cast container test._E_xpect.container
