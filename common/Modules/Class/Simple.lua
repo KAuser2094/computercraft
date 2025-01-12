@@ -16,17 +16,6 @@ local function getBaseClassDefinition()
     return BASE_CLASS_DEFINITION
 end
 
---- Gets the string className from the valid types
---- @param klass string | common.Class.ClassDefinition | common.Class.Class
---- @return string | nil  klassName Returns nil if not a valid type
-local function getClassNameFromTypesWithIt(klass)
-    Dbg.logV(TAG, "Getting ClassName from:",klass)
-    if type(klass) == "string" then return klass end
-    if klass.isAClassDefinition or klass.isAClass then return klass.getClassName() end
-
-    Dbg.logE(TAG, "SOMEHOW GOT NIL GIVE KLASS, klass, type, isAClass/Definition", klass, type(klass), klass.isAClassDefinition or klass.isAClass)
-end
-
 local classDefOnly = {
     isAClassDefinition = true,
     init = true,
@@ -98,7 +87,7 @@ local function MakeSimpleClassDefinition(className, base, ...)
     --- @param klass string | common.Class.ClassDefinition | common.Class.Class
     --- @return boolean
     function cls:inheritsClass(klass)
-        local klassName = getClassNameFromTypesWithIt(klass)
+        local klassName = utils.getClassNameFromTypesWithIt(klass)
         if not klassName then return false end
         if klassName == cls.className then return false end -- Is Exact Class
         for baseName, _ in pairs(cls.inherits) do
@@ -111,7 +100,7 @@ local function MakeSimpleClassDefinition(className, base, ...)
     --- @param klass string | common.Class.ClassDefinition | common.Class.Class
     --- @return boolean
     function cls:isExactClass(klass)
-        local klassName = getClassNameFromTypesWithIt(klass)
+        local klassName = utils.getClassNameFromTypesWithIt(klass)
         if not klassName then return false end
         if cls.className == klassName then return true end
         return false
@@ -121,7 +110,7 @@ local function MakeSimpleClassDefinition(className, base, ...)
     --- @param klass string | common.Class.ClassDefinition | common.Class.Class
     --- @return boolean
     function cls:isClass(klass)
-        local klassName = getClassNameFromTypesWithIt(klass)
+        local klassName = utils.getClassNameFromTypesWithIt(klass)
         if not klassName then return false end
         Dbg.logI(TAG, "inherits = ",cls.inherits)
         for baseName, _ in pairs(cls.inherits) do

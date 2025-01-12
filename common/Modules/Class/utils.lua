@@ -110,15 +110,17 @@ end
 
 --- Inherits from the given classes, goes from last given to first.
 --- @param self common.Class.ClassDefinition
---- @param klass common.Class.ClassDefinition Base class to inherit from
+--- @param klass? common.Class.ClassDefinition Base class to inherit from
 --- @param ... common.Class.ClassDefinition ...
 function utils.inheritFrom(self, klass, ...)
-    local klasses = { ... }
-    for i=#klasses, 1, -1 do
+    local count = select("#", klass, ...) -- I *BELIEVE* that CC Tweaks lua  would actually allow for tables CONSTRUCTED with nils to not terminate the # operator.
+    local klasses = { klass, ... }
+    for i=count, 1, -1 do
         local kls = klasses[i]
-        kls:inheritInto(self)
+        if kls then
+            kls:inheritInto(self)
+        end
     end
-    klass:inheritInto(self)
 end
 
 --- Makes it so the key will not be inherited

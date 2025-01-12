@@ -21,8 +21,12 @@ end
 
 --- Creates A ClassDefinition Object
 --- @param className string The class name (try to make this unique within the program)
+--- @param base? common.Class.ClassDefinition
+--- @param ... common.Class.ClassDefinition
 --- @return common.Class.ClassDefinition BaseDefinition The Base ClassDefinition Object you can add onto.
-local function MakeClassDefinition(className)
+local function MakeClassDefinition(className, base, ...)
+    --- @type (common.Class.ClassDefinition?)[] -- NOTE: THIS COULD END UP BEING SPARSE
+    local bases = { base, ... }
     Dbg.logI(TAG, "Creating ClassDef with name: " .. className)
     local cls = {}
     --[[
@@ -307,6 +311,10 @@ local function MakeClassDefinition(className)
     -- This is a "just in case", idk if I will end up using it
     cls.getBaseClassDefinition = getBaseClassDefinition
 
+    -- Inherit bases
+    if next(bases) then -- Has any element
+        cls:inheritFrom(table.unpack(bases))
+    end
 
     return cls
 end
