@@ -7,8 +7,6 @@ local pretty = assert(require("cc.pretty"))
 --- @class common.expect
 local expect = {} -- Don't really like this name but I want this to be a replacement to "cc.expect"
 
---- @alias _e_xpect.type_input _e_xpect.type_strings | common.Class.Class | common.Class.ClassDefinition | common.Class.SimpleClassDefinition
-
 --- @enum _e_xpect.type_strings
 expect.TYPES = {
     ["nil"] = "nil",
@@ -73,8 +71,8 @@ end
 --- @generic T
 --- @param index string | number
 --- @param value `T`
---- @param type1 _e_xpect.type_input
---- @param ... _e_xpect.type_input
+--- @param type1 any
+--- @param ... any
 --- @return `T`? value Returns the value if success
 function expect.expect(index, value, type1, ...)
     return expect.expectWithTag("", index, value, type1, ...)
@@ -86,8 +84,8 @@ end
 --- @param tag string
 --- @param index string | number
 --- @param value `T`
---- @param type1 _e_xpect.type_input
---- @param ... _e_xpect.type_input
+--- @param type1 any
+--- @param ... any
 --- @return `T`? value Returns the value if success
 function expect.expectWithTag(tag, index, value, type1, ...)
     if not enabledTags[tag] then return value end -- Not enabled
@@ -98,8 +96,8 @@ end
 
 --- @generic T
 --- @param value `T`
---- @param type1 _e_xpect.type_input
---- @param ... _e_xpect.type_input
+--- @param type1 any
+--- @param ... any
 --- @return `T`? value Returns the value if success
 --- @return boolean? matchedNil Will return true if the `value` was nil and the type "nil" was provided
 function expect.isType(value, type1, ...)

@@ -72,6 +72,7 @@ local function MakeClassDefinition(_className, base, ...)
             deepMergeOnInherit = true,
             postInherited = true,
             postInit = true,
+            postCheckWellFormed = true,
             init = true,
             _new = true,
             new = true,
@@ -106,6 +107,8 @@ local function MakeClassDefinition(_className, base, ...)
     cls.deepMergeOnInherit = utils.deepMergeOnInherit
 
     cls.postInherited = utils.postInherited
+
+    cls.postCheckWellFormed = utils.postCheckWellFormed
 
     --[[
         INSTANCE

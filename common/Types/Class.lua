@@ -68,7 +68,8 @@ local SimpleClassDefinition__private = {}
 --- @field postInherited fun(self: common.Class.ClassDefinition, klass: common.Class.ClassDefinition) -- Runs after `self` inherits INTO `klass`
 --- @field postInit fun(self: common.Class.ClassDefinition, instance: common.Class.Class) -- Ran after the main initalisation is done
 --- @field _checkWellFormed fun(self: common.Class.ClassDefinition, instance: common.Class.Class) -- Ran after WHOLE initialisation is done (Including postInit)
---- @field checkWellFormed fun(self: common.Class.ClassDefinition, instance: common.Class.Class) -- Ran after normal WellFormed Check, allowing each base class to run extra checks
+--- @field checkWellFormed fun(self: common.Class.ClassDefinition, instance: common.Class.Class) --  Ran after WHOLE initialisation is done (Including postInit)
+--- @field postCheckWellFormed fun(self: common.Class.ClassDefinition, instance: common.Class.Class) -- Ran after basic wellformedness checks, alllows for class specific checks
 --- @field markPublic fun(self: common.Class.ClassDefinition, key: any) -- Sets the key to be public (included in the instance table)
 --- @field markDefinitionOnly fun(self: common.Class.ClassDefinition, key: any) -- Sets the key to only exist in the defintion (it is discarded during __index)
 --- @field preIndex fun(self: common.Class.ClassDefinition, this: common.Class.Class, key: any): any -- Attempts to overwrite the __index. Note that it is not guarenteed to run if a previous base class foudn a value

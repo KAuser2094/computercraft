@@ -98,7 +98,6 @@ function utils._basicInheritInto(self, klass)
         end
     end
 
-    -- TODO: Execute hook
     self:postInherited(klass)
 end
 
@@ -190,12 +189,13 @@ function utils.new(definition, ...)
 
     setmetatable(this, definition)
 
-    if definition.init then -- It should always exist...
+    if definition.init then -- It should always exist...even if it does nothing
         definition.init(this, ...)
     end
-
-    definition:postInit(this)
-    definition:_checkWellFormed(this)
+    for _, base in pairs(definition.inherits) do
+        base:postInit(this)
+    end
+    definition:checkWellFormed(this)
 
     return this
 end
@@ -210,10 +210,15 @@ function utils.postInit(self, instance) end
 --- @param instance common.Class.Class
 function utils._checkWellFormed(self, instance) --[[Implemented in Interface class.]] end
 
---- Is ran after ALL initialisation, extra checks on wellformedness, extra wellformedness checks that can be defined
+--- Is ran after ALL initialisation, extra checks on wellformednesz
 --- @param self common.Class.ClassDefinition
 --- @param instance common.Class.Class
-function utils.checkWellFormed(self, instance) --[[Implemented in Interface class.]] end
+function utils.checkWellFormed(self, instance) self._checkWellFormed(self, instance) end
+
+--- Is ran after ALL initialisation, extra checks on wellformedness, extra wellformedness checks that can be defined for this class
+--- @param self common.Class.ClassDefinition
+--- @param instance common.Class.Class
+function utils.postCheckWellFormed(self, instance) end
 
 --- Makes a the key-value at key public so the user can see the fields in the class
 --- @param self common.Class.ClassDefinition

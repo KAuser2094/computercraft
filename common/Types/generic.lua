@@ -13,6 +13,8 @@ check = klass.isAClass and klass.isAClass() -- Simply returns itself or nil
 if check then <do whatever requires it to be the class> end
 ]]
 
+--- @alias notNil boolean | string | number | function | table
+
 --- @alias filePath string
 
---- @alias truthSet table<any, boolean>
+--- @alias truthSet table<notNil, boolean>

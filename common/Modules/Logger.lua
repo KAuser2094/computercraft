@@ -252,7 +252,7 @@ local function new(kwargs)
         end
     end
 
-    --- Uses cc.pretty to build up a string
+    --- Uses cc.pretty to build up a doc
     --- @param ... any Anything you wish to log
     --- @return ccTweaked.cc.pretty.Doc
     local function buildLogDoc(...)
@@ -270,6 +270,20 @@ local function new(kwargs)
         table.remove(docs) -- Remove the trailing space
 
         return p.concat(table.unpack(docs))
+    end
+
+    --- Uses cc.pretty to build up a string
+    --- @param ... any Anything you wish to become a pretty string
+    function this.buildString(...)
+        local doc = buildLogDoc(...)
+        return p.render(p.group(doc))
+    end
+
+    --- Uses cc.pretty to print (Note this isn't a log, it just an alternate way to print)
+    --- @param ... any Anything you wish to print
+    function this.print(...)
+        local doc = buildLogDoc(...)
+        p.print(doc)
     end
 
     --- Builds the starting section of the print statemnt
@@ -295,7 +309,7 @@ local function new(kwargs)
             local fullDoc = p.concat(prefix, p.space, logDoc)
             local flattenedDoc = p.group(fullDoc)
             if tagSettings.outputTerminal then
-                -- TODO: Add an option to print out flattened
+                -- TODO: Make this acutally use outputTerminal. Right now just goes straight to term.current() (I think?)
                 p.print(tagSettings.flattenPrintOut and flattenedDoc or fullDoc)
             end
 

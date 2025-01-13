@@ -42,11 +42,13 @@ local function MakeSimpleClassDefinition(_className, base, ...)
 
     cls.className = _className .. "_" .. tostring(utils.getNewClassDefinitionID())
 
-    cls.inherits = { [cls.className] = cls }
+    cls.inherits = { [cls.className] = cls } -- NOTE: Note that this includes the class itself. As in, we consider a class to have inherited itself.
 
     -- Inheritance in a SimpleClass is just a dumb shallow copy
     for _, b in pairs(bases) do -- Cannot use ipairs due to maybe being sparse
-        cls.inherits[b:getClassName()] = b
+        for _, b_base in pairs(b.inherits) do
+            cls.inherits[b_base:getClassName()] = b_base
+        end
         for k,v in pairs(b) do
             if not doNotInherit[k] then
                 cls[k] = v
