@@ -1,6 +1,5 @@
 {
     "Lua.workspace.library": [
-        "${workspaceFolder}",
         "${addons}/cc-tweaked/module/library"
     ],
     "files.exclude": {
