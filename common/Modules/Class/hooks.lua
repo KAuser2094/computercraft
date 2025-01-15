@@ -22,22 +22,26 @@ function hooks.postInheritInto(self, klass) end
 
 -- Runs just before "init" is called (this one is mostly useless)
 --- @param self common.Modules.Class.ClassDefinition
+--- @param instance common.Modules.Class.Class
 function hooks.preInit(self, instance, ...) end
 
 -- Runs just after "init" is called
 --- @param self common.Modules.Class.ClassDefinition
+--- @param instance common.Modules.Class.Class
 function hooks.postInit(self, instance, ...) end
 
 --[[
-    WELLFORMEDNESS ETC ETC (TODO: typing for instance) Also, for this one there arguably should only be one hook...
+    WELLFORMEDNESS ETC ETC. Also, for this one there arguably should only be one hook...
 ]]
 
 -- Runs just before the invariants are to be checked
 --- @param self common.Modules.Class.ClassDefinition
+--- @param instance common.Modules.Class.Class
 function hooks.preCheckInvariant(self, instance) end
 
 -- Runs just after all the invariants have been checked
 --- @param self common.Modules.Class.ClassDefinition
+--- @param instance common.Modules.Class.Class
 function hooks.postCheckInvariant(self, instance) end
 
 --[[

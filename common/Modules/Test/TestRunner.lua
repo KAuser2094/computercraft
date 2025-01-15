@@ -3,8 +3,6 @@ local Class = require "common.Modules.Class"
 
 local TAG = "TEST_RUNNER"
 
---- TODO: Make this follow the coding style I decided on
-
 --- @class common.Modules.Test.TestRunner.results.item
 --- @field passed string[]
 --- @field failed string[]
@@ -174,7 +172,6 @@ function TestRunner.run(this)
             totalFailed = totalFailed + #failed
         end
     end
-    -- TODO: Display total results better
     local formattedResultsDoc = this:formatResults(totalPassed, totalFailed)
     if this.oldTerm and not this.completeSilent then -- If the logger printout was silenced but you still want to see results
         p.print(formattedResultsDoc)

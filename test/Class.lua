@@ -34,12 +34,24 @@ end
 --- @field SubClassDef common.Modules.Class.ClassDefinition
 --- @field SubClass common.Modules.Class.Class
 
+--[[
+ClassTests:addTest("CHANGEME", function (container)
+    --- @cast container test.ClassTests.container
+    local TAG = container.TAG
+    local Dbg = container.Logger
+    ---
+
+end)
+--]]
+
+---[[
 ClassTests:addTest("CHECK CLASS FIELDS", function (container)
     --- @cast container test.ClassTests.container
     local TAG = container.TAG
     local Dbg = container.Logger
+    --- TODO:
 
-    -- TODO: Add test
 end)
+--]]
 
 return ClassTests
