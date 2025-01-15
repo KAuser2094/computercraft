@@ -1,5 +1,6 @@
 {
     "Lua.workspace.library": [
+        "${workspaceFolder}",
         "${addons}/cc-tweaked/module/library"
     ],
     "files.exclude": {
@@ -16,4 +17,6 @@
         "cc_tweaked_rom_stub/modules/main/cc"
     ],
     "Lua.workspace.useGitIgnore": true,
+    "Lua.diagnostics.disable": [
+    ],
 }

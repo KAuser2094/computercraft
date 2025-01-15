@@ -1,71 +1,70 @@
 local p = require "cc.pretty"
-local cdm = require "common.Modules.Class.Simple"
+local Class = require "common.Modules.Class"
 
 local TAG = "TEST_RUNNER"
 
 --- TODO: Make this follow the coding style I decided on
 
---- @class TestRunner.results.item
+--- @class common.Modules.Test.TestRunner.results.item
 --- @field passed string[]
 --- @field failed string[]
 
---- @alias TestRunner.results TestRunner.results.item[]
+--- @alias common.Modules.Test.TestRunner.results common.Modules.Test.TestRunner.results.item[]
 
---- @class common.Test.ITestRunner: common.Class.IClass
---- @field addTestModule fun(self: common.Test.ITestRunner, testModule: common.TestModuleDefinition) -- Adds a module to the runner using a definition
---- @field run fun(self: common.Test.ITestRunner): TestRunner.results -- Runs the test modules added to the runner, will also return the results field
---- @field setVerbose fun(self: common.Test.ITestRunner): common.Test.ITestRunner -- Will log anything
---- @field setFailures fun(self: common.Test.ITestRunner): common.Test.ITestRunner -- Will only log the failures
---- @field setSilent fun(self: common.Test.ITestRunner): common.Test.ITestRunner -- Will not log to terminal, only file
---- @field setShow fun(self: common.Test.ITestRunner, terminal?: ccTweaked.term.Redirect): common.Test.ITestRunner -- Will also log to terminal, uses the passed in terminal if given
---- @field setCompletelySilent fun(self: common.Test.TestRunner): common.Test.ITestRunner -- Will not even print out the results
+--- @class common.Modules.Test.ITestRunner: common.Modules.Class.IClass
+--- @field addTestModule fun(self: common.Modules.Test.ITestRunner, testModule: common.Modules.Test.TestModuleDefinition) -- Adds a module to the runner using a definition
+--- @field run fun(self: common.Modules.Test.ITestRunner): common.Modules.Test.TestRunner.results -- Runs the test modules added to the runner, will also return the results field
+--- @field setVerbose fun(self: common.Modules.Test.ITestRunner): common.Modules.Test.ITestRunner -- Will log anything
+--- @field setFailures fun(self: common.Modules.Test.ITestRunner): common.Modules.Test.ITestRunner -- Will only log the failures
+--- @field setSilent fun(self: common.Modules.Test.ITestRunner): common.Modules.Test.ITestRunner -- Will not log to terminal, only file
+--- @field setShow fun(self: common.Modules.Test.ITestRunner, terminal?: ccTweaked.term.Redirect): common.Modules.Test.ITestRunner -- Will also log to terminal, uses the passed in terminal if given
+--- @field setCompletelySilent fun(self: common.Modules.Test.TestRunner): common.Modules.Test.ITestRunner -- Will not even print out the results
 
---- @class common.Test.TestRunner : common.Test.ITestRunner, common.Class.Class
---- @field modules common.Test.TestModule[]
+--- @class common.Modules.Test.TestRunner : common.Modules.Test.ITestRunner, common.Modules.Class.Class
+--- @field modules common.Modules.Test.TestModule[]
 --- @field totalTests integer
---- @field results TestRunner.results
+--- @field results common.Modules.Test.TestRunner.results
 --- @field dbg common.Logger
---- @field formatResults fun(self: common.Test.TestRunner, totalPassed: integer, totalFailed: integer): ccTweaked.cc.pretty.Doc -- Formats the results to a pretty Doc
+--- @field formatResults fun(self: common.Modules.Test.TestRunner, totalPassed: integer, totalFailed: integer): ccTweaked.cc.pretty.Doc -- Formats the results to a pretty Doc
 --- @field oldTerm? ccTweaked.term.Redirect
 --- @field completeSilent? boolean
 
---- @class common.Test.TestRunnerDefinition : common.Class.SimpleClassDefinition
-local TestRunner = cdm("TestRunner")
+--- @class common.Modules.Test.TestRunnerDefinition : common.Modules.Class.ClassDefinition
+local TestRunner = Class("TEST RUNNER")
 
---- @class _T_est_R_unner_D_efinition.new.kwargs
+--- @class common.Modules.Test.TestRunnerDefinition.new.kwargs
 --- @field Logger common.Logger
 
---- Create a TestRunner instance
---- @param kwargs _T_est_R_unner_D_efinition.new.kwargs
---- @return common.Test.ITestRunner
-function TestRunner.new(kwargs)
-    --- @type common.Test.ITestRunner
-    return TestRunner._new(kwargs)
+--- Create new TestRunner instance
+--- @param kwargs common.Modules.Test.TestRunnerDefinition.new.kwargs
+--- @return common.Modules.Test.TestRunner
+function TestRunner:new(kwargs)
+    --- @type common.Modules.Test.TestRunner
+    return self:rawnew(kwargs)
 end
 
---- @param self common.Test.TestRunner
---- @param kwargs _T_est_R_unner_D_efinition.new.kwargs
-function TestRunner.init(self, kwargs)
-    self.modules = {}
-    self.totalTests = 0
-    self.results = {}
-    self.dbg = assert(kwargs.Logger, "TestRunner needs a Logger to work")
+--- Init
+--- @param this common.Modules.Test.TestRunner
+--- @param kwargs common.Modules.Test.TestRunnerDefinition.new.kwargs
+function TestRunner:init(this, kwargs)
+    this.modules = {}
+    this.totalTests = 0
+    this.results = {}
+    this.dbg = assert(kwargs.Logger, "TestRunner needs a Logger to work")
 
-    self.dbg.logV(TAG, "Created Test Runner")
+    this.dbg.logV(TAG, "Created Test Runner")
 end
 
---- @param this common.Test.TestRunner
---- @param testModule common.TestModuleDefinition
+--- @param this common.Modules.Test.TestRunner
+--- @param testModule common.Modules.Test.TestModuleDefinition
 function TestRunner.addTestModule(this, testModule)
-    local module = testModule.new{
-        Logger = this.dbg,
-    }
+    local module = testModule:new{ Logger = this.dbg, }
     this.totalTests = this.totalTests + module.testCount
     table.insert(this.modules, module)
 end
 
---- @param this common.Test.TestRunner
---- @return common.Test.TestRunner this -- For chaining
+--- @param this common.Modules.Test.TestRunner
+--- @return common.Modules.Test.TestRunner this -- For chaining
 function TestRunner.setVerbose(this)
     this.dbg.setGlobalLevel(this.dbg.Levels.Verbose)
     this.dbg.setTagLevel(TAG, this.dbg.Levels.Verbose)
@@ -76,8 +75,8 @@ function TestRunner.setVerbose(this)
     return this
 end
 
---- @param this common.Test.TestRunner
---- @return common.Test.TestRunner this -- For chaining
+--- @param this common.Modules.Test.TestRunner
+--- @return common.Modules.Test.TestRunner this -- For chaining
 function TestRunner.setFailures(this)
     this.dbg.setGlobalLevel(this.dbg.Levels.Fatal)
     this.dbg.setTagLevel(TAG, this.dbg.Levels.Fatal)
@@ -87,8 +86,8 @@ function TestRunner.setFailures(this)
     return this
 end
 
---- @param this common.Test.TestRunner
---- @return common.Test.TestRunner this -- For chaining
+--- @param this common.Modules.Test.TestRunner
+--- @return common.Modules.Test.TestRunner this -- For chaining
 function TestRunner.setSilent(this)
     this.oldTerm = this.dbg.getGlobalOutputTerminal()
     this.dbg.setGlobalOutputTerminal() -- Simply don't log to the terminal :)
@@ -99,9 +98,9 @@ function TestRunner.setSilent(this)
     return this
 end
 
---- @param this common.Test.TestRunner
+--- @param this common.Modules.Test.TestRunner
 --- @param terminal? ccTweaked.term.Redirect
---- @return common.Test.TestRunner this -- For chaining
+--- @return common.Modules.Test.TestRunner this -- For chaining
 function TestRunner.setShow(this, terminal)
     this.completeSilent = false
     terminal = terminal or this.oldTerm
@@ -114,15 +113,15 @@ function TestRunner.setShow(this, terminal)
     return this
 end
 
---- @param this common.Test.TestRunner
---- @return common.Test.TestRunner this -- For chaining
+--- @param this common.Modules.Test.TestRunner
+--- @return common.Modules.Test.TestRunner this -- For chaining
 function TestRunner.setCompleteSilence(this)
     this:setSilent()
     this.completeSilent = true
     return this
 end
 
---- @param this common.Test.TestRunner
+--- @param this common.Modules.Test.TestRunner
 --- @param totalPassed integer
 --- @param totalFailed integer
 --- @return ccTweaked.cc.pretty.Doc
@@ -154,8 +153,8 @@ function TestRunner.formatResults(this, totalPassed, totalFailed)
     return p_result
 end
 
---- @param this common.Test.TestRunner
---- @return TestRunner.results results
+--- @param this common.Modules.Test.TestRunner
+--- @return common.Modules.Test.TestRunner.results results
 function TestRunner.run(this)
     this.dbg.logI(TAG, "Starting Tests")
     local totalPassed = 0

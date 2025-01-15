@@ -7,7 +7,10 @@ local pretty = assert(require("cc.pretty"))
 --- @class common.expect
 local expect = {} -- Don't really like this name but I want this to be a replacement to "cc.expect"
 
---- @enum _e_xpect.type_strings
+-- Types to add:
+-- Postive, Negative, Zero.
+
+--- @enum
 expect.TYPES = {
     ["nil"] = "nil",
     boolean = "boolean",
