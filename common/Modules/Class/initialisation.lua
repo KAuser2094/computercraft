@@ -1,5 +1,5 @@
 
-local proxy = require "common.Modules.Class2.proxy"
+local proxy = require "common.Modules.Class.proxy"
 local TAG_INVARIANT = "INVARIANT CHECK"
 local Dbg = require "common.Modules.Logger".singleton
 Dbg.getTagSettings(TAG_INVARIANT):setLevel(Dbg.Levels.Warning)

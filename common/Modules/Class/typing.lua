@@ -1,4 +1,4 @@
-local store = require "common.Modules.Class2.store"
+local store = require "common.Modules.Class.store"
 
 local types = {}
 

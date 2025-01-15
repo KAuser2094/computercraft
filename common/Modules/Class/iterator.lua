@@ -1,4 +1,4 @@
-local store = require "common.Modules.Class2.store"
+local store = require "common.Modules.Class.store"
 
 local function append(tbl, other)
     for _, item in ipairs(other) do

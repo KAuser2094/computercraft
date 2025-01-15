@@ -38,6 +38,8 @@ ClassTests:addTest("CHECK CLASS FIELDS", function (container)
     --- @cast container test.ClassTests.container
     local TAG = container.TAG
     local Dbg = container.Logger
+
+    -- TODO: Add test
 end)
 
 return ClassTests

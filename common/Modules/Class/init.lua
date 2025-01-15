@@ -8,12 +8,12 @@
 --- HOW:
 --- Make class definitions with "mark" functions to mark keys for functionality, A new class does not directly have its class definition as its mt but a proxy that filters out class def only k-v pairs
 
-local marker = require "common.Modules.Class2.marker"
-local hooks = require "common.Modules.Class2.hooks"
-local iterator = require "common.Modules.Class2.iterator"
-local inheritance = require "common.Modules.Class2.inheritance"
-local initialisation = require "common.Modules.Class2.initialisation"
-local typing = require "common.Modules.Class2.typing"
+local marker = require "common.Modules.Class.marker"
+local hooks = require "common.Modules.Class.hooks"
+local iterator = require "common.Modules.Class.iterator"
+local inheritance = require "common.Modules.Class.inheritance"
+local initialisation = require "common.Modules.Class.initialisation"
+local typing = require "common.Modules.Class.typing"
 
 --- @alias common.Modules.Class.ClassOrDefinition common.Modules.Class.IClass | common.Modules.Class.Class | common.Modules.Class.ClassDefinition
 
