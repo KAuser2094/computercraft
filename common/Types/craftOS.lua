@@ -8,12 +8,26 @@
 
 periphemu = {}
 
+--- @alias craftOS.periphemu.types
+--- | "drive"
+--- | "modem"
+--- | "monitor"
+--- | "printer"
+--- | "speaker"
+--- | "computer"
+--- | "debugger"
+--- | "debug_adapter"
+--- | "chest"
+--- | "minecraft:chest"
+--- | "energy"
+--- | "tank"
+
 --- Creates and attaches peripheral at `side` with type `ty` (should match a type from `periphemu.names()`), using optional parameter where it applies
 --- @param side string -- Side to attach to (Yes the names here can be whatever)
---- @param ty string -- Types which needs to be within periphemu.names()
---- @param options? any -- Optional depending on type of peripheral
+--- @param ty craftOS.periphemu.types -- Types which needs to be within periphemu.names()
+--- @param ... any -- Optional depending on type of peripheral
 --- @return boolean attached -- Did it attach?
-function periphemu.create(side, ty, options) end
+function periphemu.create(side, ty, ...) end
 
 --- Removes and detaches peripheral at `side`
 --- @param side string -- Side to attach to (Yes the names here can be whatever)
