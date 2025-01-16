@@ -5,7 +5,7 @@ local ExampleFields = require "test.container_fields"
 local pc = require "common.Modules.expect"
 
 --- @class test.ExpectTests : common.Modules.Test.TestModuleDefinition
-local ExpectTests = Class("CLASS TESTS", TestModule)
+local ExpectTests = Class("EXPECT TESTS", TestModule)
 
 function ExpectTests:init(this, kwargs)
     TestModule.init(self, this, kwargs)
@@ -101,9 +101,11 @@ ExpectTests:addTest("TEST EXPECT FUNCTIONS RUN AND ERROR", function (container)
         {TAG, "index", container.Class, container.SubClassDef},
     }
 
+    Dbg.logT(TAG, "(IGNORE IF THIS IS ON TERMINAL)", "ANY FOLLOWING ERRORS IN LOG FILE ARE TO BE EXPECTED, CHECKING IF FUNCTIONS DO ERROR")
     for _, args in ipairs(expectErrorsArgs) do
         Dbg.assertFunctionErrorsWithTag(TAG, pc.expectWithTag, args, Dbg.buildString("Succeeded (expected fail) expect given args: ", args))
     end
+    Dbg.logT(TAG, "(IGNORE IF THIS IS ON TERMINAL)", "END OF CHECKING IF FUNCTIONS ERROR")
 end)
 --]]
 

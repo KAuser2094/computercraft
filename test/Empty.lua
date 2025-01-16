@@ -5,7 +5,7 @@ local ExampleFields = require "test.container_fields"
 
 
 --- @class test.EmptyTests : common.Modules.Test.TestModuleDefinition
-local EmptyTests = Class("CLASS TESTS", TestModule)
+local EmptyTests = Class("CHANGEME TESTS", TestModule)
 
 function EmptyTests:init(this, kwargs)
     TestModule.init(self, this, kwargs)

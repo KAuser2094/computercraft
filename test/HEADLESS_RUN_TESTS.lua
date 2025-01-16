@@ -1,16 +1,25 @@
---- NOTE: Move this to (or just require this from) the root
+--[[
+    Is used by headless to run tests
+]]
+
+--- TODO: Fix Logger so that it either works properly with headless, or has a "headless" mode that can be set
+
+local pretty = require "cc.pretty"
 local TestRunnerDef = require "common.Modules.Test.TestRunner"
 local Dbg = require "common.Modules.Logger"
 Dbg = Dbg.new()
--- Change the global level to fatal if you only want to see failing tests, none to be completely silent except the total results at the end
 Dbg = Dbg.setGlobalPath("log/ALL_TESTS.txt")
 
 local TestRunner = TestRunnerDef:new({ Logger = Dbg })
-TestRunner:setVerbose():setShow(term.current())
 -- Add Modules
 TestRunner:addTestModule(require("test.Class"))
 TestRunner:addTestModule(require("test.Expect"))
 
 
 -- Run tests
-local _ = TestRunner:run()
+local results, doc, str = TestRunner:run()
+print(str)
+---[[
+os.sleep(1)
+os.shutdown()
+--]]

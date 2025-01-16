@@ -153,6 +153,8 @@ end
 
 --- @param this common.Modules.Test.TestRunner
 --- @return common.Modules.Test.TestRunner.results results
+--- @return ccTweaked.cc.pretty.Doc resultsFormattedDoc
+--- @return string resultsFormattedString
 function TestRunner.run(this)
     this.dbg.logI(TAG, "Starting Tests")
     local totalPassed = 0
@@ -177,7 +179,7 @@ function TestRunner.run(this)
         p.print(formattedResultsDoc)
     end
     this.dbg.logT(TAG, "RESULTS:", p.line, formattedResultsDoc)
-    return this.results
+    return this.results, formattedResultsDoc, p.render(formattedResultsDoc)
 end
 
 return TestRunner
