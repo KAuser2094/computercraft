@@ -12,6 +12,7 @@ Dbg = Dbg.setTagLevel(TAG, Dbg.Levels.Warning)
 --- @field TAG string
 --- @field dbg common.Logger
 --- @field testInit fun(self: common.Modules.Test.TestModule, container: table) -- Initialise test container
+--- @field testCleanUp fun(self: common.Modules.Test.TestModule, container: table) -- Clean up after each test
 
 --- @class common.Modules.Test.TestModuleDefinition : common.Modules.Class.ClassDefinition
 local TestModule = Class("TEST_MODULE")
@@ -58,6 +59,11 @@ end
 --- @param testContainer table
 function TestModule.testInit(this, testContainer) end
 
+--- Is ran after every test, let's you clean up any changes you don't want to affect other tests (whether same module or not)
+--- @param this common.Modules.Test.TestModule
+--- @param testContainer table
+function TestModule.testCleanUp(this, testContainer) end
+
 --- Adds a test to the module
 --- @param testName string
 --- @param testFn fun(container: table)
@@ -86,6 +92,7 @@ function TestModule.run(this)
             failed = failed or {}
             table.insert(failed, testName)
         end
+        this:testCleanUp(container)
     end
     return passed, failed
 end

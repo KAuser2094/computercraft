@@ -23,6 +23,7 @@ expect.TYPES = {
     -- Extra types
     integer = "integer",
     callable = "callable",
+    wrappedPeripheral = "wrappedPeripheral",
     Class = "Class",
     ClassDefinition = "ClassDefinition",
 }
@@ -117,6 +118,9 @@ function expect.isType(value, type1, ...)
                 if valueType == "number" and value % 1 == 0 then return value end
             elseif ty == expect.TYPES.callable then
                 if valueType == "function" or (valueType == "table" and getmetatable(value).__call) then return value end
+            elseif ty == expect.TYPES.wrappedPeripheral and valueType == "table" then
+                local mt = getmetatable(value)
+                if mt and mt.__name == "peripheral" then return value end
             elseif ty == expect.TYPES.Class then
                 if valueType == "table" and value.isAClass then return value end
             elseif ty == expect.TYPES.ClassDefinition then

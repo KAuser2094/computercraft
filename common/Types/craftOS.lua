@@ -23,14 +23,14 @@ periphemu = {}
 --- | "tank"
 
 --- Creates and attaches peripheral at `side` with type `ty` (should match a type from `periphemu.names()`), using optional parameter where it applies
---- @param side string -- Side to attach to (Yes the names here can be whatever)
+--- @param side string | integer -- Side to attach to (Yes the names here can be whatever) (passing in an integer prepends the type)
 --- @param ty craftOS.periphemu.types -- Types which needs to be within periphemu.names()
 --- @param ... any -- Optional depending on type of peripheral
 --- @return boolean attached -- Did it attach?
 function periphemu.create(side, ty, ...) end
 
 --- Removes and detaches peripheral at `side`
---- @param side string -- Side to attach to (Yes the names here can be whatever)
+--- @param side string -- Side to attach to (Yes the names here can be whatever) (Also yes integer is technically valid, but there would never be a name made of integers as is prepends the type)
 --- @return boolean detached -- Did it attach?
 function periphemu.remove(side) end
 
