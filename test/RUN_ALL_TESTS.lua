@@ -9,6 +9,8 @@ local TestRunner = TestRunnerDef:new({ Logger = Dbg })
 TestRunner:setFailures():setShow(term.current())
 -- Add Modules
 TestRunner:addTestModule(require("test.Class"))
+TestRunner:addTestModule(require("test.Expect"))
+
 
 -- Run tests
 local _ = TestRunner:run()
