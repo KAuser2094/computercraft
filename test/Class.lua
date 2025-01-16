@@ -50,7 +50,56 @@ ClassTests:addTest("CHECK CLASS FIELDS", function (container)
     local TAG = container.TAG
     local Dbg = container.Logger
     --- TODO:
+    --- Class Instance only (not making a loop for this)
+    Dbg.assertWithTag(TAG, container.Class["isAClass"] ~= nil, "Class is missing field: " .. "isAClass")
+    Dbg.assertWithTag(TAG, container.ClassDef["isAClass"] == nil, "ClassDef has field it shouldn't " .. "isAClass")
+    Dbg.assertWithTag(TAG, container.SubClass["isAClass"] ~= nil, "SubClass is missing field: " .. "isAClass")
+    Dbg.assertWithTag(TAG, container.SubClassDef["isAClass"] == nil, "SubClassDef has field it shouldn't " .. "isAClass")
 
+    local ClassFields = {
+        -- Public
+        "getClassName",
+        "getAllClassNames",
+        "isClass",
+        "isExactClass",
+        "inheritsClass",
+        -- Proxy / Private
+        "__expect",
+        "__expectGetTypes",
+    }
+
+    for _, key in ipairs(ClassFields) do
+        Dbg.assertWithTag(TAG, container.Class[key] ~= nil, "Class is missing field: " .. key)
+        Dbg.assertWithTag(TAG, container.ClassDef[key] ~= nil, "ClassDef is missing field: " .. key)
+
+        Dbg.assertWithTag(TAG, container.SubClass[key] ~= nil, "SubClass is missing field: " .. key)
+        Dbg.assertWithTag(TAG, container.SubClassDef[key] ~= nil, "SubClassDef is missing field: " .. key)
+    end
+
+    local ClassDefinitionOnlyFields = { -- Oh god this is long
+        "__className",
+        "__directlyInherits",
+        "__inherits",
+        "isAClassDefinition",
+        "__definitionSettings",
+        "markDefinitionOnly", "markPublic", "markProxy",
+        "markDoNotInherit", "markMergeOnInherit", "markDeepMergeOnInherit", "markAppendOnInherit",
+        "markTypesExpected", "markAbstractField", "markAbstractMethod",
+        "preInheritInto", "postInheritInto", "preInit", "postInit",
+        "preCheckInvariant", "postCheckInvariant",
+        "preIndex", "postIndex", "preNewIndex",
+        "forInheritsBottomUp", "forInheritsTopDown",
+        "inheritInto", "inheritFrom",
+        "init", "rawnew", "new",
+    }
+
+    for _, key in ipairs(ClassDefinitionOnlyFields) do
+        Dbg.assertWithTag(TAG, container.ClassDef[key] ~= nil, "ClassDef is missing field: " .. key)
+        Dbg.assertWithTag(TAG, container.Class[key] == nil, "Class has ClassDefOnly field: " .. key)
+
+        Dbg.assertWithTag(TAG, container.SubClassDef[key] ~= nil, "SubClassDef is missing field: " .. key)
+        Dbg.assertWithTag(TAG, container.SubClass[key] == nil, "SubClass has SubClassDefOnly field: " .. key)
+    end
 end)
 --]]
 

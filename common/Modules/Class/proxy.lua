@@ -50,11 +50,16 @@ function proxy.createProxy(definition, instance)
         for base in definition:forInheritsBottomUp(true) do
             value = base:preIndex(inst, key)
             validateValue(definition, inst, key, value)
-            if value then return value end
+            if value ~= nil then return value end
         end
         value = definition:preIndex(inst, key)
         value = validateValue(definition, inst, key, value)
-        if value then return value end
+        if value ~= nil then return value end
+
+        -- Access the proxy
+        value = p[key]
+        value = validateValue(definition, inst, key, value)
+        if value ~= nil then return value end
 
         --- Actually access the definition
         value = definition[key]

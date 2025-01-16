@@ -23,6 +23,8 @@ local typing = require "common.Modules.Class.typing"
 --- @field getClassName fun(): string
 --- @field getAllClassNames fun(self: common.Modules.Class.ClassOrDefinition): string[]
 --- @field isClass fun(self: common.Modules.Class.ClassOrDefinition, klass: string | common.Modules.Class.ClassOrDefinition): boolean
+--- @field isExactClass fun(self: common.Modules.Class.ClassOrDefinition, klass: string | common.Modules.Class.ClassOrDefinition): boolean
+--- @field inheritsClass fun(self: common.Modules.Class.ClassOrDefinition, klass: string | common.Modules.Class.ClassOrDefinition): boolean
 
 --- Type for instances FULL object
 --- @class common.Modules.Class.Class : common.Modules.Class.IClass
@@ -73,7 +75,7 @@ do -- "do" block is just here because I didn't like how it looked with no indent
     local marks = {
         "markDefinitionOnly",
         "markPublic",
-        "markPublic",
+        "markProxy",
         "markDoNotInherit",
         "markMergeOnInherit",
         "markDeepMergeOnInherit",
@@ -92,6 +94,7 @@ do -- "do" block is just here because I didn't like how it looked with no indent
     BaseClassDefinition:markDefinitionOnly("__className")
     BaseClassDefinition:markMergeOnInherit("__inherits")
     BaseClassDefinition:markDefinitionOnly("__inherits")
+    BaseClassDefinition:markDefinitionOnly("__directlyInherits")
     -- NOTE: "__definitionSettings" has its own custom inheritance method that is in the function
     BaseClassDefinition:markDefinitionOnly("__definitionSettings")
 
@@ -124,7 +127,9 @@ do -- "do" block is just here because I didn't like how it looked with no indent
 
     -- Next we define the interator functions
     BaseClassDefinition.forInheritsBottomUp = iterator.forInheritsBottomUp
+    BaseClassDefinition:markDefinitionOnly("forInheritsBottomUp")
     BaseClassDefinition.forInheritsTopDown = iterator.forInheritsTopDown
+    BaseClassDefinition:markDefinitionOnly("forInheritsTopDown")
 
     -- Next we define the inheritance functions (which should use the appropriate hooks)
     BaseClassDefinition.inheritInto = inheritance.inheritInto
