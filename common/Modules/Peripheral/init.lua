@@ -29,8 +29,8 @@ function Peripheral:init(this, nameOrWrapped)
     -- TODO: Type/Types
 
     -- Allow this to act like a normal wrappedPeripheral
-    for _, method in ipairs(assert(peripheral.getMethods(this.side))) do
-        self[method] = function (...) peripheral.call(this.side, method, ...) end
+    for k, v in pairs(this.wrapped) do
+        this[k] = v
     end
 end
 
