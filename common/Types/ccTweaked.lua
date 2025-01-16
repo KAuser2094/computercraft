@@ -10,7 +10,6 @@
 --- | "front"
 
 --- Yes this seems a bit redundant
-
 --- @alias ccTweaked.side string
 
 --- @alias ccTweaked.os_event
@@ -53,6 +52,26 @@
 
 
 --- BELOW TAKEN FROM THE CC TWEAKED LUA LANGUAGE SERVER ADDON (Editing to use British English spelling instead)
+--- Any licensing and other issues and questions is better found/asked at their gitlab: https://gitlab.com/carsakiller/cc-tweaked-documentation
+--[[
+    MIT License
+    Copyright (c) 2024 carsakiller
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+--]]
 
 --- Contains constants and functions for colour values. Useful in conjunction
 --- with Bundled Cables from mods like [Project
@@ -263,4 +282,4 @@ function colours.toBlit(colour) end
 
 --- END OF TAKEN FROM ADDON
 
---- TOOD: Add certain modules that are defined in ccTweaked addon but not as classes and therefore...just don't work (like io)
+--- TOOD: Add certain modules that are defined in ccTweaked addon but not as classes or global variables and therefore...just don't work (like io)

@@ -1,3 +1,4 @@
+--- @diagnostic disable: inject-field, undefined-field
 local Class = require "common.Modules.Class"
 local TestModule = require "common.Modules.Test.Test"
 

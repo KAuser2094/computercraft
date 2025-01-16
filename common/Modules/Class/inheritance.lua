@@ -8,12 +8,6 @@ local function append(tbl, other)
     if type(other) == "string" then
         other = { other }
     end
-    for k,v in pairs(tbl) do
-        print(v)
-    end
-    for k,v in pairs(other) do
-        print(v)
-    end
     for _, item in ipairs(other) do
         table.insert(tbl, item)
     end
@@ -66,6 +60,7 @@ end
 --- @param klass common.Modules.Class.ClassDefinition
 function inheritance.inheritInto(self, klass)
     table.insert(klass.__directlyInherits, self.__className)
+    klass.__inherits[self.__className] = self
     --- Class specific work
     for base in self:forInheritsBottomUp(true) do
         base:preInheritInto(klass)

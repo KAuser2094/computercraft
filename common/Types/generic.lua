@@ -1,19 +1,7 @@
 --- @meta _
 
--- TIPS:
---[[
-REALLY cursed way to make language server forcably recognise a variable as a certain type
---- @type Class
-klass = klass --[[@as Class]]
---]]
---[[
-Alternatively, just:
-local check
-check = klass.isAClass and klass.isAClass() -- Simply returns itself or nil
-if check then <do whatever requires it to be the class> end
-]]
-
---- @alias notNil boolean | string | number | function | table
+--- For ccTweaked userdata mostly doesn't exist (In fact I think it just doesn't)
+--- @alias notNil boolean | string | number | function | table | thread
 
 --- @alias filePath string
 

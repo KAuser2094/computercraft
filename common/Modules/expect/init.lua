@@ -19,7 +19,7 @@ expect.TYPES = {
     ["function"] = "function",
     table = "table,",
     thread = "thread",
-    userdata = "userdata",
+    userdata = "userdata", -- This one basically doesn't exist, but I will add for completion's sake
     -- Extra types
     integer = "integer",
     callable = "callable",

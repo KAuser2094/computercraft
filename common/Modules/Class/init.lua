@@ -15,6 +15,8 @@ local inheritance = require "common.Modules.Class.inheritance"
 local initialisation = require "common.Modules.Class.initialisation"
 local typing = require "common.Modules.Class.typing"
 
+local store = require "common.Modules.Class.store"
+
 --- @alias common.Modules.Class.ClassOrDefinition common.Modules.Class.IClass | common.Modules.Class.Class | common.Modules.Class.ClassDefinition
 
 --- Type for the public interface of the class object
@@ -183,6 +185,7 @@ local function makeClassDefinition(className, base1, ...)
     --- MAYBE: Ensure that className given is unique (frankly, you probably can just presume the user is smart enough to not do that)
     cls.__className = className
 
+
     cls.__directlyInherits = {}
 
     cls.__inherits = { [cls.__className] = cls}
@@ -192,7 +195,9 @@ local function makeClassDefinition(className, base1, ...)
     --- Returns the (unique) class name of this class
     function cls.getClassName() return className end
     cls:markPublic("getClassName")
+    cls:markDoNotInherit("getClassName")
 
+    store.storeDefinition(cls)
 
     cls.__expect = typing.__expect
     cls:markProxy("__expect")

@@ -38,7 +38,7 @@ end
 function types.isClass(self, klass)
     local definition = store.getDefinition(self)
     local klassName = type(klass) == "string" and klass or klass.getClassName()
-    assert(definition, "Class store did not have definition for name" .. self.getClassName()) -- TODO: Change this to dbg
+    assert(definition, "Class store did not have definition for name" .. self.getClassName()) -- TODO: Change this to a log
     return not not definition.__inherits[klassName]
 end
 
