@@ -1,16 +1,7 @@
 --- @diagnostic disable: inject-field, undefined-field
 local Class = require "common.Modules.Class"
 local TestModule = require "common.Modules.Test.Test"
-
-local _cn1 = "sdgsgsgws1"
-local _cd1 = Class(_cn1)
-_cd1.baseField = true
-local _ci1 = _cd1:new()
-
-local _cn2 = "htghsfgdsgnjsgpag2"
-local _cd2 = Class(_cn2, _cd1)
-_cd2.subField = true
-local _ci2 = _cd2:new()
+local ExampleFields = require "test.container_fields"
 
 --- @class test.ClassTests : common.Modules.Test.TestModuleDefinition
 local ClassTests = Class("CLASS TESTS", TestModule)
@@ -20,13 +11,13 @@ function ClassTests:init(this, kwargs)
 end
 
 function ClassTests.testInit(this, c)
-    c.ClassName = _cn1
-    c.ClassDef = _cd1
-    c.Class = _ci1
+    c.ClassName = ExampleFields.BASE_CLASS_NAME
+    c.ClassDef =  ExampleFields.BASE_CLASS_DEFINITION
+    c.Class = ExampleFields.BASE_CLASS_INSTANCE
 
-    c.SubClassName = _cn2
-    c.SubClassDef = _cd2
-    c.SubClass = _ci2
+    c.SubClassName = ExampleFields.SUB_CLASS_NAME
+    c.SubClassDef = ExampleFields.SUB_CLASS_DEFINITION
+    c.SubClass = ExampleFields.SUB_CLASS_INSTANCE
 end
 
 --- @class test.ClassTests.container : common.Modules.Test.TestModule.container

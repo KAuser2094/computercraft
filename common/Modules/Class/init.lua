@@ -185,7 +185,6 @@ local function makeClassDefinition(className, base1, ...)
     --- MAYBE: Ensure that className given is unique (frankly, you probably can just presume the user is smart enough to not do that)
     cls.__className = className
 
-
     cls.__directlyInherits = {}
 
     cls.__inherits = { [cls.__className] = cls}
