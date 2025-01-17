@@ -4,14 +4,15 @@
 local Class = require "common.Modules.Class"
 local utils = require "common.Modules.Peripheral.utils"
 
-local EmuAPI = require "common.Modules.CraftOSAPI.init"
-EmuAPI.overloadIfNeeded() -- This is already ran, this is just here to be explicit
+-- This presumes that multi-typed peripherals are a thing, so we backport it if it is not.
+require "common.Modules.BackportCC.multiTypedPeripherals".backport()
 
 local peripheral = _G.peripheral
 
---- @class common.Modules.Peripheral.IPeripheral : common.Modules.Class.IClass -- I wanted to inherit from the "wrappedPeripheral" type ccTweaked addon gives, but it includes ALL methods
+--- @class common.Modules.Peripheral.IPeripheral : common.Modules.Class.IClass -- I wanted to inherit from the "wrappedPeripheral" type ccTweaked addon gives, but it includes ALL methods possible so no
 --- @field side string
 --- @field wrapped ccTweaked.peripherals.wrappedPeripheral
+--- @field types table<string, boolean>
 
 --- @class common.Modules.Peripheral.Peripheral : common.Modules.Peripheral.IPeripheral, common.Modules.Class.Class
 
@@ -26,7 +27,7 @@ function Peripheral:init(this, nameOrWrapped)
     -- TODO: Change to dbg and use dbg asserts
     this.side = assert(utils.getName(nameOrWrapped))
     this.wrapped = assert(peripheral.wrap(this.side))
-    -- TODO: Type/Types
+    this.types = getmetatable(this.wrapped).types -- Maybe should be a copy and not reference?
 
     -- Allow this to act like a normal wrappedPeripheral
     for k, v in pairs(this.wrapped) do
