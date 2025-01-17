@@ -21,6 +21,15 @@ local periphemu = _G.periphemu
 
 local module = {}
 
+module.SIDES = {
+    TOP = "top",
+    BOTTOM = "bottom",
+    LEFT = "left",
+    RIGHT = "right",
+    BACK = "back",
+    FRONT = "front",
+}
+
 function module.inEmulator()
     return not not periphemu -- Check if the api exists, if it does then we are in an emulator
 end
