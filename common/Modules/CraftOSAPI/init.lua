@@ -69,7 +69,7 @@ function module.attachChestPeripheral(side, doubleChest)
             side = "chest_" .. tostring(lastChestID)
         end
     end
-    return periphemu.create(side, "chest", doubleChest)
+    return periphemu.create(side, "minecraft:chest", doubleChest)
 end
 
 local lastTankID = -1
