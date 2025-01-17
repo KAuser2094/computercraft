@@ -9,6 +9,10 @@
     - find: when given a "type" can now also search for secondary/generic peripheral typing
 
     It also gives the option to call the old functions, by running in an environment without the overloads
+
+    NOTE: We only change "_ENV" NOT "_G" this means that the change is within the running programs environment only. Any other program will act as normal
+
+    Use "backportGlobal" to do that, however note that it has no check on if it is already loaded as there is no reasonable way to check that.
 ]]
 
 local host = require "common.Modules.host"
@@ -114,9 +118,8 @@ end
 
 local module = {}
 
-local alreadyOverloaded = _G.peripheral.wrap == wrap -- The function has been set already
-function module.backport(forceOverload)
-    if forceOverload or (host.peripheralSingleTyped() and not alreadyOverloaded) then
+function module.backportGlobal(forceOverload)
+    if forceOverload or (host.peripheralSingleTyped() and not _G.peripheral.backportMultiTypes) then
 
         _G.peripheral.wrap = wrap
         _G.peripheral.getType = getType
@@ -124,14 +127,27 @@ function module.backport(forceOverload)
         _G.peripheral.find = find
 
         -- Stop running this over and over for no reasons
-        alreadyOverloaded = true
+        _G.peripheral.backportMultiTypes = true
     end
 end
 
---- Boolean to see if this has been ran once
+function module.backport(forceOverload)
+    if forceOverload or (host.peripheralSingleTyped() and not _ENV.peripheral.backportMultiTypes) then
+
+        _ENV.peripheral.wrap = wrap
+        _ENV.peripheral.getType = getType
+        _ENV.peripheral.hasType = hasType
+        _ENV.peripheral.find = find
+
+        -- Stop running this over and over for no reasons
+        _ENV.peripheral.backportMultiTypes = true
+    end
+end
+
+--- Boolean to see if this has been ran once in this script
 --- @return boolean alreadyOverloaded
 function module.hasBackportedAlready()
-    return alreadyOverloaded
+    return _ENV.peripheral.backportMultiTypes
 end
 
 --- Runs old wrap before overload
