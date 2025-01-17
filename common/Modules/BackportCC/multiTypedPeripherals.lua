@@ -36,6 +36,9 @@ local isolatedFind = setfenv(oldFind, isolatedEnv)
 
  -- TODO: Add "expect" type checking to all of these
 
+ --- Wrap a side into a peripheral
+ --- @param side string
+ --- @return ccTweaked.peripherals.wrappedPeripheral? wrapped
 local function wrap(side)
     local wrapped = isolatedWrap(side)
     if not wrapped then return nil end
@@ -73,6 +76,9 @@ local function wrap(side)
     return wrapped
 end
 
+--- Get the type(s) from the peripheral
+--- @param peripheral string | ccTweaked.peripherals.wrappedPeripheral
+--- @return string? ... The types
 local function getType(peripheral)
     expect(1, peripheral, "string", "table")
     local wrapped = type(peripheral) == "string" and wrap(peripheral) or peripheral
@@ -88,6 +94,10 @@ local function getType(peripheral)
     return table.unpack(mt.types)
 end
 
+--- Returns if the passed in type exists within the peripheral's types
+--- @param peripheral string | ccTweaked.peripherals.wrappedPeripheral
+--- @param peripheralType string
+--- @return boolean? hasType -- Only nil-able because original is
 local function hasType(peripheral, peripheralType)
     expect(1, peripheral, "string", "table")
     expect(2, peripheralType, "string")
@@ -99,6 +109,10 @@ local function hasType(peripheral, peripheralType)
     return false
 end
 
+--- Finds and returns wrapped peripherals which have the given type and pass the filter
+--- @param peripheralType string
+--- @param filter fun(name: string, wrapped: ccTweaked.peripherals.wrappedPeripheral): boolean
+--- @return ccTweaked.peripherals.wrappedPeripheral? ... The found peripherals, all wrapped
 local function find(peripheralType, filter)
     expect(1, peripheralType, "string")
     --- @diagnostic disable-next-line: param-type-mismatch
@@ -108,6 +122,7 @@ local function find(peripheralType, filter)
     for _, side in ipairs(_G.peripheral.getNames()) do
         if hasType(side, peripheralType) then
             local wrapped = wrap(side)
+            --- @cast wrapped ccTweaked.peripherals.wrappedPeripheral
             if filter == nil or filter(side, wrapped) then
                 table.insert(found, wrapped)
             end
