@@ -4,7 +4,19 @@
 
 --- @module "common.Types.craftOS"
 
-local peripheral = _G.peripheral
+-- Unused
+--[[
+
+local native_peripheral = {} -- COPY (not same reference) of the native peripheral api
+
+for k, v in pairs(_G.peripheral) do
+    native_peripheral[k] = v
+end
+
+--]]
+
+local peripheral = _G.peripheral -- Reference to the peripheral api (which may or may not be overloaded)
+
 local periphemu = _G.periphemu
 
 local module = {}
@@ -28,7 +40,7 @@ end
 --- @return integer detachCount -- Amount this detached
 function module.detachAll()
     local count = 0
-    for _, name in ipairs(peripheral.getNames()) do
+    for _, name in ipairs(_G.peripheral.getNames()) do
         if periphemu.remove(name) then count = count + 1 end
     end
     return count
@@ -127,15 +139,19 @@ function module.unmount(ccPath)
 end
 
 --[[
-    Redine peripheral to work with craftOS and match closer to native ccTweaked
+    Overload functions maybe?
 ]]
 
 local overloaded = false
 
 function module.overloadIfNeeded()
+
+    -- Just attach a modem peripheral to a side on the computer (Took way too long to figure this out, even though you have to do that in an actual ccTweaked computer as well)
+
+    --[[
     if module.inEmulator() and not overloaded then
         -- We need to have at least 1 modem on the network to connect make getNames() to work
-        local workaroundName = "NETWORK CONNECTING WORKAROUND"
+        local workaroundName = "NETWORK CONNECTING WORKAROUND 239802352342304"
         module.attachModemPeripheral(workaroundName) -- reasonably should not be a network ID in use
 
         --- @diagnostic disable-next-line: duplicate-set-field
@@ -154,8 +170,24 @@ function module.overloadIfNeeded()
             return names
         end
 
+        --- @diagnostic disable-next-line: duplicate-set-field
+        _G.peripheral.find = function (peripheralType, filter)
+            local found = {}
+            local names = _G.peripheral.getNames() -- Get ALL names (excludes workaround)
+            for _, nameToCheck in ipairs(names) do
+                if native_peripheral.hasType(nameToCheck, peripheralType) then
+                    local wrappedToCheck = assert(native_peripheral.wrap(nameToCheck), "Somehow `getNames()` returned a peripheral name that was not actually on the network: " .. nameToCheck)
+                    if filter == nil or filter(nameToCheck, wrappedToCheck) then
+                        table.insert(found, wrappedToCheck)
+                    end
+                end
+            end
+            return table.unpack(found)
+        end
+
         overloaded = true
     end
+    --]]
 end
 
 module.overloadIfNeeded() -- Idk why I put this in a seperate function...
