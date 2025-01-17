@@ -46,19 +46,19 @@ do -- "do" block is just here because I didn't like how it looked with no indent
     -- We define settings first as it will hold all the "marks" and possibly other stuff.
     --- @class common.Modules.Class.ClassDefinition.settings
     BaseClassDefinition.__definitionSettings = { -- NOTE: This should be copied over as it needs to be definition specific
-        CLASS_DEFINITION_ONLY = {}, --- @type truthSet -- Set of keys that should be filtered out be proxy
+        CLASS_DEFINITION_ONLY = {}, --- @type AnySet -- Set of keys that should be filtered out be proxy
         -- Instance
-        PUBLIC = {}, --- @type truthSet -- Holds keys to be public in the instance
-        PROXY = {}, --- @type truthSet -- Holds keys to be put into the proxy table of instance
+        PUBLIC = {}, --- @type AnySet -- Holds keys to be public in the instance
+        PROXY = {}, --- @type AnySet -- Holds keys to be put into the proxy table of instance
         -- Wellformedness / Class validness / Invariants (Note these apply to the INSTANCE not the definition)
-        INVARIANT_EXPECT = {}, --- @type truthSet -- Keys that MUST exist for an instance to be valid/wellformed
-        INVARIANT_TYPES = {}, --- @type table<notNil, truthSet> -- Key is the key to check, the value is an array of valid types, technically nil may be in this array, they are just skipped over.
+        INVARIANT_EXPECT = {}, --- @type AnySet -- Keys that MUST exist for an instance to be valid/wellformed
+        INVARIANT_TYPES = {}, --- @type table<notNil, AnySet> -- Key is the key to check, the value is an array of valid types, technically nil may be in this array, they are just skipped over.
         INVARIANT_OVERLOAD = {}, --- @type table<notNil, table<function, true>> -- Key needed to have a function that ISN'T from the ones provided
         -- Inheritance
-        INHERIT_DO_NOT_COPY = {}, --- @type truthSet -- Set of keys not to copy over when inheriting
-        INHERIT_MERGE = {}, --- @type truthSet -- Set of keys to shallow merge when inheriting (if nil, then will set to {} before merging)
-        INHERIT_DEEP_MERGE = {}, --- @type truthSet -- Set of keys to deep merge when inheriting (if nil, then will set to {} before merging)
-        INHERIT_APPEND = {}, --- @type truthSet -- Set of keys to append when inheriting (if then then will set to {} before appending)
+        INHERIT_DO_NOT_COPY = {}, --- @type AnySet -- Set of keys not to copy over when inheriting
+        INHERIT_MERGE = {}, --- @type AnySet -- Set of keys to shallow merge when inheriting (if nil, then will set to {} before merging)
+        INHERIT_DEEP_MERGE = {}, --- @type AnySet -- Set of keys to deep merge when inheriting (if nil, then will set to {} before merging)
+        INHERIT_APPEND = {}, --- @type AnySet -- Set of keys to append when inheriting (if then then will set to {} before appending)
     }
     -- Next we define the mark functions and mark the settings and the functions themselves. (And continue to do so later)
     BaseClassDefinition.markDefinitionOnly = marker.markDefinitionOnly
