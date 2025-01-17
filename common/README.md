@@ -41,7 +41,7 @@ Also allows for private variables and fields (named `proxy` in the code as that 
 - Class Instance (The actual instance the user can use, `public` marked keys will appear in the table itself)
 - - Proxy (The `mt` for the instance, holds private (`proxy`) variables and filters access to below)
 - - - Class Definition (Holds the fields and methods specific to a class)
-- - - - Base Definition (Holds most of the fields and methods that any class will have)
+- - - - Base Definition (Holds most of the fields and methods that any class will have, makes it so we aren't copying over redundant fields over and over)
 
 ### Expect (actually `expect` to match ccTweaked)
 
@@ -50,6 +50,22 @@ An extension/rewrite to ccTweaked's `expect` module. Uses the `Logger` module fo
 ### Test
 
 Has a `module` and `runner` class. `Module`s can be used to create tests and the `Runner` class can callect these test modules and run them all, outputing the result.
+
+### Host
+
+Small module that can help with checking versioning. You can check if you are within a range of CC or Minecraft or whatever platoform's version to determine what features exist. Also includes common checks like the CC 1.99 multi-typed peripherals being added.
+
+### BackpotCC
+
+Holds code to emulate features in later version of CC back to older versions. For example `multiTypedPeripherals` overloads the peripheral API to work closer to how it does in CC 1.99+. There backports (usualluy) applied locally (for the running environment) or globally. And will only load if needed, unless a parameter is passed to force it to overload again.
+
+### CraftOSAPI
+
+Is an alternative API to the ones given by craftOS-PC (`mounter` and `periphemu`), with some other helper functions.
+
+### Peripheral
+
+A way to work with peripherals using classes from the `Class` module whilst working wherever a wrapped peripheral would. Also includes a `PeripheralManager` that can (If you provide it with preipheral events) hold all peripherals on a network and help manage them, making sure that you aren't using redundant class instances.
 
 ## Types
 
