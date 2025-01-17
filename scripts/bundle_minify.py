@@ -22,6 +22,8 @@ def main():
              input_file, 
              "-p", 
              "./?.lua", # Root directory 
+            "-p", 
+             "./?/init.lua", # Root directory with init.lua
              "-p",
              "cc_tweaked_rom_stub/modules/main/?.lua", # + the modules from rom
              ],
