@@ -45,13 +45,13 @@ local function new(kwargs)
 
     --- @class _L_ogger.settings
     local settings = {
-        path = kwargs.path or "/log.txt", --- @type filePath
+        path = kwargs.path or "/log.txt", --- @type string
         level = kwargs.level or DebugLevel.Verbose, --- @type _L_ogger.LoggerLevel
         outputTerminal = kwargs.outputTerminal, --- @type ccTweaked.term.Redirect?
         flattenPrintOut = kwargs.flattenPrintOut or false, --- @type boolean
     }
 
-    --- @param _path filePath
+    --- @param _path string
     --- @return _L_ogger.settings self -- Chaining
     function settings:setPath(_path)
         self.path = _path
@@ -138,7 +138,7 @@ local function new(kwargs)
     end
 
     --- Sets path to log file
-    --- @param _path filePath
+    --- @param _path string
     --- @return common.Logger self For chaining
     function this.setGlobalPath(_path)
         settings.path = _path
@@ -206,7 +206,7 @@ local function new(kwargs)
 
     --- Sets path to log file
     --- @param tag string
-    --- @param _path filePath
+    --- @param _path string
     --- @return common.Logger self For chaining
     function this.setTagPath(tag, _path)
         this.getTagSettings(tag).path = _path
