@@ -48,8 +48,7 @@ end
 --- @param this common.Modules.Peripheral.Inventory | ccTweaked.peripherals.wrappedPeripheral
 --- @return boolean empty
 function Inventory.isEmpty(this)
-    local _, value = next(this.list())
-    return not not value
+    return not not next(this.list())
 end
 
 return Inventory
