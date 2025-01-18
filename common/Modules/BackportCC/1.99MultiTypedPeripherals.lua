@@ -165,6 +165,8 @@ function module.hasBackportedAlready()
     return _ENV.peripheral.backportMultiTypes
 end
 
+-- TODO: Add warnings that if there was a global backport outside this script that these are incorrect, right now we presume that you would only use local backport
+
 --- Runs old wrap before overload
 --- @param side string
 --- @return ccTweaked.peripherals.wrappedPeripheral? wrappedPeripheral

@@ -57,7 +57,7 @@ Small module that can help with checking versioning. You can check if you are wi
 
 ### BackpotCC
 
-Holds code to emulate features in later version of CC back to older versions. For example `multiTypedPeripherals` overloads the peripheral API to work closer to how it does in CC 1.99+. There backports (usualluy) applied locally (for the running environment) or globally. And will only load if needed, unless a parameter is passed to force it to overload again.
+Holds code to emulate features in later version of CC back to older versions. For example `1.99MultiTypedPeripherals` overloads the peripheral API to work closer to how it does in CC 1.99+. There backports (usualluy) applied locally (for the running environment) or globally. And will only load if needed, unless a parameter is passed to force it to overload again.
 
 ### CraftOSAPI
 
