@@ -21,10 +21,10 @@ There is a `Class` Module and type that for the most part will be used. However 
 Each class will generally end up creating 3/4 types:
 - `I<CLASSNAME>Definition` -- This one is optional, ignore if you aren't using it.
 - `<CLASSNAME>Definition` (inherits the above if it is being used)
-- `I<CLASSNAME>` which holds only the public facing side of an instance (and inherits from `IClass`)
-- `<CLASSNAME>` which holds the public and private sides of an instance (Also inherits from above) (and inherits from `Class`)
+- `I<CLASSNAME>` which holds only the minimum required of an instance (and inherits from `IClass`)
+- `<CLASSNAME>` which holds any accessible field of an instance (Also inherits from above if it exists) (and inherits from `Class`)
 
-Within the implementation file (and implementations that inherit from it) you are likely to use `<CLASSNAME>`. When actually using an instance, use `I<CLASSNAME>` so you are only using methods that you are expected to use.
+The `I` definitions are meant for "incomplete" interface-like classes, which require actual implementation by inheriting classes, for the most part this is not used so the `I` definitions are also ignored.
 
 ### Class Module
 
