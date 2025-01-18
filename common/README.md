@@ -67,6 +67,10 @@ Is an alternative API to the ones given by craftOS-PC (`mounter` and `periphemu`
 
 A way to work with peripherals using classes from the `Class` module whilst working wherever a wrapped peripheral would. Also includes a `PeripheralManager` that can (If you provide it with preipheral events) hold all peripherals on a network and help manage them, making sure that you aren't using redundant class instances.
 
+### Tabula
+
+A generic table module, is technically a class but can be used like a module (For the most part) on any table. Also includes more specific table like objects, like sets and arrays.
+
 ## Types
 
 Holds non functional code to introduce types.

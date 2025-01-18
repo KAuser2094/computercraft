@@ -3,11 +3,9 @@ local TAG = "TEST MODULE BASE"
 local Dbg = require "common.Modules.Logger".singleton
 Dbg = Dbg.setTagLevel(TAG, Dbg.Levels.Warning)
 
---- @class common.Modules.Test.ITestModule : common.Modules.Class.IClass
+--- @class common.Modules.Test.TestModule : common.Modules.Class.Class
 --- @field testCount integer
 --- @field run fun(self: common.Modules.Test.TestModule): string[], string[] -- Runs tests in test module, returning passed and failed
-
---- @class common.Modules.Test.TestModule : common.Modules.Test.ITestModule, common.Modules.Class.Class
 --- @field tests table<string, fun(container: table)>
 --- @field TAG string
 --- @field dbg common.Logger

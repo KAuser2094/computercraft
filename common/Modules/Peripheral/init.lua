@@ -11,17 +11,15 @@ require "common.Modules.BackportCC.1.99MultiTypedPeripherals".backport()
 
 local peripheralAPI = _G.peripheral
 
---- @class common.Modules.Peripheral.IPeripheral : common.Modules.Class.IClass
+--- @class common.Modules.Peripheral.Peripheral : common.Modules.Class.Class
 --- @field name string -- Yes this is actually also in the proxy
 --- @field type string
 --- @field types ArraySet<string>
---- @field isPresent fun(self: common.Modules.Peripheral.IPeripheral): boolean -- True if this is visibly attached on the network
---- @field hasType fun(self: common.Modules.Peripheral.IPeripheral, ty: string) -- Check if `ty` is within the types of the peripheral
-
---- @class common.Modules.Peripheral.Peripheral : common.Modules.Peripheral.IPeripheral, common.Modules.Class.Class
+--- @field isPresent fun(self: common.Modules.Peripheral.Peripheral): boolean -- True if this is visibly attached on the network
+--- @field hasType fun(self: common.Modules.Peripheral.Peripheral, ty: string) -- Check if `ty` is within the types of the peripheral
 
 --- @class common.Modules.Peripheral.PeripheralDefinition : common.Modules.Class.ClassDefinition
-local Peripheral = Class("PERIPHERAL")
+local Peripheral = Class(TAG)
 
 --- Create new Peripheral instance
 --- @param nameOrWrapped string | ccTweaked.peripherals.wrappedPeripheral

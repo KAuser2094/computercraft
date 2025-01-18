@@ -9,16 +9,14 @@ local TAG = "TEST_RUNNER"
 
 --- @alias common.Modules.Test.TestRunner.results common.Modules.Test.TestRunner.results.item[]
 
---- @class common.Modules.Test.ITestRunner: common.Modules.Class.IClass
---- @field addTestModule fun(self: common.Modules.Test.ITestRunner, testModule: common.Modules.Test.TestModuleDefinition) -- Adds a module to the runner using a definition
---- @field run fun(self: common.Modules.Test.ITestRunner): common.Modules.Test.TestRunner.results -- Runs the test modules added to the runner, will also return the results field
---- @field setVerbose fun(self: common.Modules.Test.ITestRunner): common.Modules.Test.ITestRunner -- Will log anything
---- @field setFailures fun(self: common.Modules.Test.ITestRunner): common.Modules.Test.ITestRunner -- Will only log the failures
---- @field setSilent fun(self: common.Modules.Test.ITestRunner): common.Modules.Test.ITestRunner -- Will not log to terminal, only file
---- @field setShow fun(self: common.Modules.Test.ITestRunner, terminal?: ccTweaked.term.Redirect): common.Modules.Test.ITestRunner -- Will also log to terminal, uses the passed in terminal if given
---- @field setCompletelySilent fun(self: common.Modules.Test.TestRunner): common.Modules.Test.ITestRunner -- Will not even print out the results
-
---- @class common.Modules.Test.TestRunner : common.Modules.Test.ITestRunner, common.Modules.Class.Class
+--- @class common.Modules.Test.TestRunner : common.Modules.Class.Class
+--- @field addTestModule fun(self: common.Modules.Test.TestRunner, testModule: common.Modules.Test.TestModuleDefinition) -- Adds a module to the runner using a definition
+--- @field run fun(self: common.Modules.Test.TestRunner): common.Modules.Test.TestRunner.results -- Runs the test modules added to the runner, will also return the results field
+--- @field setVerbose fun(self: common.Modules.Test.TestRunner): common.Modules.Test.TestRunner -- Will log anything
+--- @field setFailures fun(self: common.Modules.Test.TestRunner): common.Modules.Test.TestRunner -- Will only log the failures
+--- @field setSilent fun(self: common.Modules.Test.TestRunner): common.Modules.Test.TestRunner -- Will not log to terminal, only file
+--- @field setShow fun(self: common.Modules.Test.TestRunner, terminal?: ccTweaked.term.Redirect): common.Modules.Test.TestRunner -- Will also log to terminal, uses the passed in terminal if given
+--- @field setCompletelySilent fun(self: common.Modules.Test.TestRunner): common.Modules.Test.TestRunner -- Will not even print out the results
 --- @field modules common.Modules.Test.TestModule[]
 --- @field totalTests integer
 --- @field results common.Modules.Test.TestRunner.results
