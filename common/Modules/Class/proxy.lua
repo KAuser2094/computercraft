@@ -23,6 +23,10 @@ local function validateValue(definition, tbl, key, value)
     return value
 end
 
+--[[
+    TODO: Add a class setting that makes the below extensible with settings
+--]]
+
 local proxyProtect = {
     isAClass = true,
     __index = true,
