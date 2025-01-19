@@ -128,10 +128,16 @@ function Tabula.getValues(tbl)
     return values
 end
 
-
+--- @generic T
+--- Removes 1 k-v pairs with v == the value given.
+--- @param tbl table
+--- @param value T
+--- @return any keyRemoved
 function Tabula.removeByValue(tbl, value)
     local k = Tabula.hasValue(tbl, value)
+    if k == nil then return nil end
     tbl[k] = nil
+    return k -- This is just here for the sake of "parity" between table.remove
 end
 
 --[[
@@ -141,7 +147,7 @@ end
 --- Shallow merges second arg into the first
 --- @param tbl table
 --- @param other table
-function Tabula.merge(tbl, other)
+function Tabula.shallowMerge(tbl, other)
     local function shallowMerge(_tbl, _other)
         for k,v in pairs(_other) do
                 _tbl[k] = v
@@ -167,6 +173,28 @@ function Tabula.deepMerge(tbl, other)
         end
     end
     deepMerge(tbl, other)
+end
+
+--[[
+    COPY
+]]
+
+--- Returns a shallow copy of the table (will be a vanilla table, mot Tabula class)
+--- @param tbl table
+--- @return table copy
+function Tabula.shallowCopy(tbl)
+    local copy = {}
+    Tabula.shallowMerge(copy, tbl)
+    return copy
+end
+
+--- Returns a deep copy of the table (will be a vanilla table, mot Tabula class)
+--- @param tbl table
+--- @return table copy
+function Tabula.deepCopy(tbl)
+    local copy = {}
+    Tabula.deepMerge(copy, tbl)
+    return copy
 end
 
 return Tabula
