@@ -4,7 +4,8 @@ local pc = require "common.Modules.expect"
 local TAG = "TABULA"
 pc.enableTag(TAG)
 
---- @class common.Modules.Tabula.Tabula : common.Modules.Class.Class, table -- No clue if the "table" does anything
+
+--- @class common.Modules.Tabula.Tabula : common.Modules.Class.Class, common.Modules.Tabula.ITabula -- No clue if the "table" does anything
 
 --- @class common.Modules.Tabula.TabulaDefinition : common.Modules.Class.ClassDefinition
 local Tabula = Class(TAG)
@@ -40,14 +41,14 @@ function Tabula.insert(tbl, pos, value)
     if value then
         table.insert(tbl, pos, value)
     else
-        table.insert(tbl, pos)
+        table.insert(tbl, pos) -- pos is "value" here
     end
 end
 
 --- @see table.remove
 --- @param tbl table
 --- @param pos? integer
---- @return any
+--- @return any? removedValue
 function Tabula.remove(tbl, pos)
     return table.remove(tbl, pos)
 end
@@ -104,6 +105,14 @@ end
     Table operations not in `table`
 ]]
 
+--- Empties out the table
+--- @param tbl table
+function Tabula.emptyTable(tbl)
+    for k, _ in pairs(tbl) do
+        tbl[k] = nil
+    end
+end
+
 --- @generic K, V
 --- Collects the keys in a table (order not guarenteed)
 --- @param tbl { [K]: V }
@@ -128,10 +137,9 @@ function Tabula.getValues(tbl)
     return values
 end
 
---- @generic T
 --- Removes 1 k-v pairs with v == the value given.
 --- @param tbl table
---- @param value T
+--- @param value any
 --- @return any keyRemoved
 function Tabula.removeByValue(tbl, value)
     local k = Tabula.hasValue(tbl, value)
