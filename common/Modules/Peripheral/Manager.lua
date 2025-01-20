@@ -16,7 +16,16 @@ pc.enableTag(TAG)
 
 local peripheralAPI = _G.peripheral
 
---- @class common.Modules.Peripheral.Manager : common.Modules.Class.Class
+local DIRECTIONS = {
+    top = true,
+    bottom = true,
+    front = true,
+    back = true,
+    left = true,
+    right = true,
+}
+
+--- @class common.Modules.Peripheral.Manager : common.Modules.Peripheral.IManager, common.Modules.Class.Class
 --- @field names common.Modules.Tabula.Set
 --- @field peripherals common.Modules.Tabula.Tabula
 
@@ -34,20 +43,18 @@ end
 --- @param this common.Modules.Peripheral.Manager
 function Manager:init(this)
     this.names = Set:new({})
-    this.peripherals = Tabula:new({})
+    this.peripherals = Set:new({})
 end
 
---- Check if name is a peripheral on the network
---- @param name string
---- @return boolean
-function Manager.isSide(name)
-    return not not Tabula.hasValue(peripheral.getNames(), name)
-end
+--[[
+    PeripheralAPI, overloads
+]]
 
 --- Wraps to the highest peripheral it can
 --- @param name string
 --- @return common.Modules.Peripheral.Peripheral?
 function Manager.wrap(name)
+    --- @type ccTweaked.peripherals.wrappedPeripheral?
     local wrapped = peripheral.wrap(name)
     if not wrapped then return end
     local P = nil
@@ -61,6 +68,10 @@ function Manager.wrap(name)
     return P
 end
 
+--[[
+    Syncing mirror to network
+]]
+
 --- Updates the names and peripherals stored within this manager
 --- @param this common.Modules.Peripheral.Manager
 function Manager.sync(this)
@@ -73,5 +84,37 @@ function Manager.sync(this)
     end
 end
 
+--- Runs this in a coroutine looking for "peripheral_detach" event and pass in the name. Detaches it from the mirror.
+--- @param this common.Modules.Peripheral.Manager
+--- @param name string
+function Manager.detach(this, name)
+    if not this.names[name] then
+        -- How did this happen??
+        this:sync() -- Just update everything in that case
+    else
+        if DIRECTIONS[name] then -- We don't store the peripherals directly next to the computer (If they disconnected they likely will become new blocks)
+            this.names[name] = nil
+            this.peripherals[name] = nil
+        else
+            this.names[name] = false
+        end
+    end
+end
+
+--- Runs this in a coroutine looking for "peripheral_attach" event and pass in the name. Attaches it from the mirror.
+--- @param this common.Modules.Peripheral.Manager
+--- @param name string
+function Manager.attach(this, name)
+    if this.names[name] then
+        -- How does this happen?
+        this:sync() -- Just update everything in that case
+    else
+        if this.names[name] == nil then -- We do not have the peripheral stored already
+            local P = this.wrap(name)
+            this.peripherals[name] = P
+        end
+        this.names[name] = true
+    end
+end
 
 return Manager
