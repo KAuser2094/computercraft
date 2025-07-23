@@ -81,6 +81,8 @@ function inheritance.inheritInto(self, klass)
     shallowMerge(klass.__definitionSettings.INHERIT_DO_NOT_COPY, self.__definitionSettings.INHERIT_DO_NOT_COPY)
     shallowMerge(klass.__definitionSettings.INHERIT_MERGE, self.__definitionSettings.INHERIT_MERGE)
     shallowMerge(klass.__definitionSettings.INHERIT_DEEP_MERGE, self.__definitionSettings.INHERIT_DEEP_MERGE)
+    shallowMerge(klass.__definitionSettings.INHERIT_APPEND, self.__definitionSettings.INHERIT_APPEND) -- Make sure this does not break? idk.
+
 
     -- TODO: THE OVERLOAD INVARIANT (MERGE UP AS WELL AS ADD ANY CONFLICTS)
 
