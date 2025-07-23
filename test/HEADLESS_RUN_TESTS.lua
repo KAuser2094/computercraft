@@ -18,7 +18,8 @@ TestRunner:addTestModule(require("test.Expect"))
 
 -- Run tests
 local results, doc, str = TestRunner:run()
-print(str)
+pretty.pretty_print(results)
+
 ---[[
 os.sleep(1)
 os.shutdown()
