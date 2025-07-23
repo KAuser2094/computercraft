@@ -74,3 +74,15 @@ A generic table module, is technically a class but can be used like a module (Fo
 ## Types
 
 Holds non functional code to introduce types.
+
+### ccTweaked
+
+An addon (hah) to the LuaLS CCTweaked addon that gives extra types like `ccTweaked.directionalSide` or `ccTweaked.os_event` and adds the British English spelling of the `colours` module.
+
+### craftOS
+
+Adds types for the CraftOS Emulator.
+
+### generic
+
+Adds some generic types that are generally useful like `notNil`, `AnySet`, `Set<T>`, `ArraySet<T>`.

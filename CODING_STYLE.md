@@ -35,7 +35,7 @@ When creating a `Class` you are technically creating a `ClassDefinition` and it 
 (The reason why I even made this dumb file)
 
 - If function is to be called by the definition itself, use `:` notation and `self` (which will automatically have the correct type)
-- If function is to be called the the instance, use `.` notation and `this` (and type `this` to be that class' type)
+- If function is to be called by the instance, use `.` notation and `this` (and type `this` to be that class' type)
 - If function could be both, use `:` notation, the actually instance's type is a manually defined and you should change the `self` of the function to include the instance there.
 
 Of course, if you are defining the functions elsewhere and simply assigning them into the class then you will HAVE to use `.` notation, where you would use `:` notation just manually put the `self` in.

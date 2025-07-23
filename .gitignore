@@ -52,3 +52,4 @@ temporary*
 
 # Ignores CraftOS computer that gets mounted here
 computer/
+config/
