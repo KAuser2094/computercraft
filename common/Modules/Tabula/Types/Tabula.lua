@@ -1,6 +1,6 @@
 --- @meta _
 
---- @class common.Modules.Tabula.ITabula : common.Modules.Class.Class, table -- No clue if the "table" does anything
+--- @class common.Modules.Tabula.Tabula : common.Modules.Class.Class, table -- No clue if the "table" does anything
 local Tabula = {}
 
 --[[

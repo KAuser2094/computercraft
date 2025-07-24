@@ -25,10 +25,6 @@ local DIRECTIONS = {
     right = true,
 }
 
---- @class common.Modules.Peripheral.Manager : common.Modules.Peripheral.IManager, common.Modules.Class.Class
---- @field names common.Modules.Tabula.Set
---- @field peripherals common.Modules.Tabula.Tabula
-
 --- @class common.Modules.Peripheral.ManagerDefinition : common.Modules.Class.ClassDefinition
 local Manager = Class(TAG)
 

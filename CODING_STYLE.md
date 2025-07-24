@@ -14,17 +14,13 @@ Look at the `Classes.Types` section,
 
 ## Classes
 
-There is a `Class` Module and type that for the most part will be used. However in some cases, like `Logger` closure type classes may be used, in general if the class is self isolated then it is fine to not use the `Class` Module
+There is a `Class` Module and type that for the most part will be used. However in some cases, like `Logger` closure type classes may be used. In general if the class is self isolated then it is fine to not use the `Class` Module.
 
 ### Types
 
-Each class will generally end up creating 3/4 types:
-- `I<CLASSNAME>Definition` -- This one is optional, ignore if you aren't using it.
-- `<CLASSNAME>Definition` (inherits the above if it is being used)
-- `I<CLASSNAME>` which holds only the minimum required of an instance (and inherits from `IClass`)
-- `<CLASSNAME>` which holds any accessible field of an instance (Also inherits from above if it exists) (and inherits from `Class`)
-
-The `I` definitions are meant for "incomplete" interface-like classes, which require actual implementation by inheriting classes, for the most part this is not used so the `I` definitions are also ignored.
+Each class will generally end up creating 2 types:
+- `<CLASSNAME>Definition` Literally the definition of the class. Includes stuff that may not become part of the actual instance. Is defined using its own implementation (mostly) and inherits from the `ClassDefinition` type from the Class module.
+- `<CLASSNAME>` which holds any accessible field of an instance (inherits from `Class` from the module). Can be defined within the implementation of the definition or in a seperate meta file in a `Types` folder of the module.
 
 ### Class Module
 

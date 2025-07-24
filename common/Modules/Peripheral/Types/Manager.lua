@@ -1,6 +1,8 @@
 --- @meta _
 
---- @class common.Modules.Peripheral.IManager : common.Modules.Class.IClass
+--- @class common.Modules.Peripheral.Manager : common.Modules.Class.Class
+--- @field names common.Modules.Tabula.Set
+--- @field peripherals common.Modules.Tabula.Tabula
 local Manager = {}
 
 --[[

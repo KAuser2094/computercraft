@@ -4,8 +4,7 @@ local pc = require "common.Modules.expect"
 local TAG = "TABULA"
 pc.enableTag(TAG)
 
-
---- @class common.Modules.Tabula.Tabula : common.Modules.Class.Class, common.Modules.Tabula.ITabula -- No clue if the "table" does anything
+--- Class Defined in Types folder
 
 --- @class common.Modules.Tabula.TabulaDefinition : common.Modules.Class.ClassDefinition
 local Tabula = Class(TAG)
