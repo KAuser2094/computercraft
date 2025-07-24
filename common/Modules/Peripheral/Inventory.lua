@@ -29,14 +29,14 @@ end
 --- Returns whether the inventory had all slots filled (NOT whether it is full itself, vanilla CC Tweaked does not have a reasonable way to do that)
 --- @param this common.Modules.Peripheral.Inventory | ccTweaked.peripherals.wrappedPeripheral
 --- @return boolean allSlotsHaveItem
-function Inventory.isAllSlotsHaveItem(this)
+function Inventory.doAllSlotsHaveItem(this)
     return #this.list() == this.size()
 end
 
 --- Returns the amount of slots filled in the inventory
 --- @param this common.Modules.Peripheral.Inventory | ccTweaked.peripherals.wrappedPeripheral
 --- @return integer slotCountWithItem
-function Inventory.getCountlotsWithItem(this)
+function Inventory.getCountSlotsWithItem(this)
     local count = 0
     for _, _ in pairs(this.list()) do
         count = count + 1
