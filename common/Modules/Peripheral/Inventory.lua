@@ -29,6 +29,40 @@ function Inventory:init(this, nameOrWrapped)
 end
 
 --[[
+    "Better" Versions of functions
+]]
+
+--- Push items from self to `other` inventory.
+--- @param this common.Modules.Peripheral.Inventory
+--- @param other common.Modules.Peripheral.Inventory | ccTweaked.peripherals.Inventory | string
+--- @param fromSlot integer
+--- @param limit? integer
+--- @param toSlot? integer
+function Inventory.push(this, other, fromSlot, limit, toSlot)
+    -- TODO: Add expect
+    local otherName
+    if type(other) == "string" then otherName = other
+    else otherName = Inventory.getName(other) end
+
+    this.pushItems(otherName, fromSlot, limit, toSlot)
+end
+
+--- Pull items from self to `other` inventory.
+--- @param this common.Modules.Peripheral.Inventory
+--- @param other common.Modules.Peripheral.Inventory | ccTweaked.peripherals.Inventory | string
+--- @param fromSlot integer
+--- @param limit? integer
+--- @param toSlot? integer
+function Inventory.pull(this, other, fromSlot, limit, toSlot)
+    -- TODO: Add expect
+    local otherName
+    if type(other) == "string" then otherName = other
+    else otherName = Inventory.getName(other) end
+
+    this.pullItems(otherName, fromSlot, limit, toSlot)
+end
+
+--[[
     Some extra helper functions
 ]]
 
