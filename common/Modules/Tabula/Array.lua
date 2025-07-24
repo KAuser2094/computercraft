@@ -22,6 +22,10 @@ function Array:new(baseArray)
     return Array:rawnew(baseArray)
 end
 
+function Array:init(this, baseTable)
+    Tabula.init(self, this, baseTable)
+end
+
 -- TODO: When I make the proxy protect a setting, add it here
 Array.isTabulaArray = true -- We do this to save compute time running `expect.isType` over and over
 Array:markProxy("isTabulaArray") -- We want each array to hold their own private value for this

@@ -22,6 +22,12 @@ function Inventory:new(nameOrWrapped)
     return Inventory:rawnew(nameOrWrapped)
 end
 
+--- @param this common.Modules.Peripheral.Inventory
+--- @param nameOrWrapped string | ccTweaked.peripherals.wrappedPeripheral -- table refers to a wrapped peripheral
+function Inventory:init(this, nameOrWrapped)
+    Peripheral.init(self, this, nameOrWrapped)
+end
+
 --[[
     Some extra helper functions
 ]]

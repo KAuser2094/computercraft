@@ -19,4 +19,10 @@ function FluidStorage:new(nameOrWrapped)
     return FluidStorage:rawnew(nameOrWrapped)
 end
 
+--- @param this common.Modules.Peripheral.Inventory
+--- @param nameOrWrapped string | ccTweaked.peripherals.wrappedPeripheral -- table refers to a wrapped peripheral
+function FluidStorage:init(this, nameOrWrapped)
+    Peripheral.init(self, this, nameOrWrapped)
+end
+
 return FluidStorage

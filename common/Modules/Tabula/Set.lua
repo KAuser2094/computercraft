@@ -10,6 +10,10 @@ pc.enableTag(TAG)
 --- @class common.Modules.Tabula.SetDefinition : common.Modules.Tabula.TabulaDefinition
 local Set = Class(TAG, Tabula)
 
+function Set:init(this, baseTable)
+    Tabula.init(self, this, baseTable)
+end
+
 --- Ceates a tabula array intance
 --- @param baseSet { [any]: true } | table -- NOTE: This will deep merge its k-v pairs into the instance table
 --- @return common.Modules.Tabula.Set
