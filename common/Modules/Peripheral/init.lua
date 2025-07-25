@@ -7,7 +7,7 @@ local TAG = "PERIPHERAL CLASS"
 pc.enableTag(TAG)
 
 -- This presumes that multi-typed peripherals are a thing, so we backport it if it is not.
-require "common.Modules.BackportCC.1.99MultiTypedPeripherals".backport()
+require "common.Modules.BackportCC.1_99MultiTypedPeripherals".backport()
 
 local peripheralAPI = _G.peripheral
 

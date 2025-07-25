@@ -9,8 +9,6 @@ local pc = require "common.Modules.expect"
 local TAG = "INVENTORY CLASS"
 pc.enableTag(TAG)
 
---- @class common.Modules.Peripheral.Inventory : common.Modules.Peripheral.Peripheral, ccTweaked.peripherals.Inventory
-
 
 --- @class common.Modules.Peripheral.InventoryDefinition : common.Modules.Peripheral.PeripheralDefinition, ccTweaked.peripherals.Inventory
 local Inventory = Class(TAG, Peripheral)
@@ -26,6 +24,9 @@ end
 --- @param nameOrWrapped string | ccTweaked.peripherals.wrappedPeripheral -- table refers to a wrapped peripheral
 function Inventory:init(this, nameOrWrapped)
     Peripheral.init(self, this, nameOrWrapped)
+    -- Redifine as the above block overwrites with the normal versions
+    this.pushItems = function (_this, other, fromSlot, limit, toSlot) return Inventory.pushItems(_this, other, fromSlot, limit, toSlot) end
+    this.pullItems = function (_this, other, fromSlot, limit, toSlot) return Inventory.pullItems(_this, other, fromSlot, limit, toSlot) end
 end
 
 --[[
@@ -38,13 +39,12 @@ end
 --- @param fromSlot integer
 --- @param limit? integer
 --- @param toSlot? integer
-function Inventory.push(this, other, fromSlot, limit, toSlot)
+function Inventory.pushItems(this, other, fromSlot, limit, toSlot)
     -- TODO: Add expect
     local otherName
     if type(other) == "string" then otherName = other
     else otherName = Inventory.getName(other) end
-
-    this.pushItems(otherName, fromSlot, limit, toSlot)
+    return peripheral.call(this.name, "pushItems", otherName, fromSlot, limit, toSlot)
 end
 
 --- Pull items from self to `other` inventory.
@@ -53,14 +53,14 @@ end
 --- @param fromSlot integer
 --- @param limit? integer
 --- @param toSlot? integer
-function Inventory.pull(this, other, fromSlot, limit, toSlot)
+function Inventory.pullItems(this, other, fromSlot, limit, toSlot)
     -- TODO: Add expect
     local otherName
     if type(other) == "string" then otherName = other
     else otherName = Inventory.getName(other) end
-
-    this.pullItems(otherName, fromSlot, limit, toSlot)
+    return peripheral.call(this.name, "pullItems", otherName, fromSlot, limit, toSlot)
 end
+
 
 --[[
     Some extra helper functions
