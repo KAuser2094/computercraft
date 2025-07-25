@@ -1,6 +1,20 @@
 --- @meta _
 --- An "addon" to the CC Tweaked addon for the Lua Language Server (heh)
 
+--[[
+    FLUID STORAGE "tanks()" RETURN
+]]
+
+--- @class ccTweaked.peripherals.fluidstorage.fluid
+--- @field name string
+--- @field amount integer
+
+--- @alias ccTweaked.peripherals.fluidstorage.fluidList { [integer] : ccTweaked.peripherals.fluidstorage.fluid }
+
+--[[
+    PERIPEHERAL SIDE TYPES
+]]
+
 --- @alias ccTweaked.directionalSide
 --- | " top"
 --- | "bottom"
@@ -47,6 +61,9 @@
 --- | "websocket_success"
 
 
+--[[
+    COLOUR BUT BRITISH ENGLISH
+]]
 --- @alias ccTweaked.colours.colour ccTweaked.colors.color
 --- @alias ccTweaked.colours.colourSet ccTweaked.colors.colorSet
 
