@@ -1,9 +1,9 @@
 --- @diagnostic disable: inject-field
--- Some generic fields that can be used among tests (so you aren't constantly redefing the stuff you need to put in the container)
--- NOTE: If a test modifies the field, then you will need to create that container field in that test itself, as it will change the field for other tests to
+-- Some generic fields that can be used among tests (so you aren't constantly redefing the stuff you need to put in the context)
+-- NOTE: If a test modifies the field, then you will need to create that context field in that test itself, as it will change the field for other tests to
 local Class = require "common.Modules.Class"
 
---- @class test.ReusableContainerFields
+--- @class test.containers.Class
 local fields = {}
 
 fields.BASE_CLASS_NAME = "sdgsgsgws1"

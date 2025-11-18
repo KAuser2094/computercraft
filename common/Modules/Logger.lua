@@ -557,7 +557,7 @@ return setmetatable(
     singleton = new().setGlobalOutputTerminal(nil).setGlobalLevel(DebugLevel.Verbose).setLogsToKeep(300).setGlobalPath("/log/program/" .. (arg and arg[0] .. ".txt" or "unkown_script_name.txt"))
 },
 {__call = function (_,...)
-        new(...)
+        return new(...)
     end
 }
 )

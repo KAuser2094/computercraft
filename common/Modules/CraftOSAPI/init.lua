@@ -75,7 +75,7 @@ end
 local lastTankID = -1
 --- Creates a tank peripheral onto the network
 --- @param side? string | integer
---- @param noTanks? integer
+--- @param noTanks? integer -- No as in number.
 --- @param types? string[]
 --- @return boolean attached
 function module.attachTankPeripheral(side, noTanks, types)
