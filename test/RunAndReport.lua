@@ -1,3 +1,4 @@
+-- This should be ran from the root directory (use require or shell.run)
 TestReporter = require "common.Modules.Test.TestReporter"
 TestRunner = require "common.Modules.Test.TestRunner"
 ClassTest = require "test.Class"
@@ -17,3 +18,5 @@ if success then
 else
     print("HTML Test Report Failed To Be Created")
 end
+
+os.shutdown()
